@@ -14,6 +14,31 @@ app.set('view engine', 'hbs');
 // please change the app name
 mongoose.connect('mongodb://localhost/fun_gif');
 
+var Gif = require('./models/gif');
+
+// Set Up API
+
+app.get('/api/gifs', function (req, res) {
+	Gif.find(function (err, allGifs) {
+		if (err) {
+			res.status(500).json({error: err.message});
+		} else {
+			res.json({results: allGifs});
+		}
+	});
+});
+
+app.post('api/gifs', function (req, res) {
+	var newGif = new Photo(req.body);
+	newGif.save(function (err, savedGif) {
+		if (err) {
+			res.status(500).json({error: err.message});
+		} else {
+			res.json(savedGif);
+		}
+	});
+});
+
 app.get("*", function (req, res) {
 	res.render("index");
 });
