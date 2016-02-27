@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 	Schema = mongoose.Schema;
 
 var GifSchema = new Schema( {
-	tag: String,
+	keyword: String,
 	url: String,
 	imported: Date
 });
