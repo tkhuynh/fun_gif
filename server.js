@@ -12,7 +12,11 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'hbs');
 
 // please change the app name
-mongoose.connect('mongodb://localhost/fun_gif');
+mongoose.connect(
+	process.env.MONGOLAB_URI ||
+  process.env.MONGOHQ_URL ||
+	'mongodb://localhost/fun_gif'
+);
 
 var Gif = require('./models/gif');
 
@@ -43,6 +47,6 @@ app.get("*", function (req, res) {
 	res.render("index");
 });
 
-app.listen(3000, function() {
+app.listen(process.env.PORT || 3000, function() {
 	console.log("server running");
 });
