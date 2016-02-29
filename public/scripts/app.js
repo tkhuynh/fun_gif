@@ -23,6 +23,7 @@ app.factory('Gif', ['$resource', function($resource) {
 
 app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http, Gif) {
 	$scope.gifs = [];
+	$scope.searched = false;
 	var keyword;
 	$scope.searchKeyword = function () {
 		keyword = $scope.keyword;
@@ -33,13 +34,21 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 		$http.get(url)
 			.then(function (response) {
 				$scope.keyword = '';
-				// api return 25 gifs, but only need 24
-				response.data.data.pop();
-				$scope.gifs = response.data.data;
+				$scope.searched = true;
+				var data = response.data.data;
+				// only need to return the number of gifs which can be divided by 4
+				if (data.length / 4 >= 1 && data.length % 4 !== 0 ) {
+					for (var counter = 0; counter < (data.length % 4); counter ++) {
+						data.pop();
+					}
+				}
+				$scope.gifs = data;
 				// find the minimum height of a gif to set height for the rest
-				$scope.minHeight = response.data.data.sort(function (a,b) {
-					return Number(a.images.downsized.height) - Number(b.images.downsized.height);
-				})[0].images.downsized.height + 'px';
+				if (data.length > 0) {
+					$scope.minHeight = $scope.gifs.sort(function (a,b) {
+						return Number(a.images.downsized.height) - Number(b.images.downsized.height);
+					})[0].images.downsized.height + 'px';
+				}
 			}, function (error) {
 				console.log(error);
 			}
@@ -48,11 +57,12 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 
 	$scope.saveGif = function (gif) {
 		gif.favorited = true;
-
+		timeStamp = new Date();
+		timeStamp = timeStamp.toLocaleDateString();
 		var gifData = {
 			keyword: keyword,
 			url: gif.images.downsized.url,
-			imported: Date()
+			imported: timeStamp
 		};
 		Gif.save(gifData, function (data) {
 			console.log("success");
@@ -60,4 +70,19 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 			console.log(error);
 		});
 	};
+}]);
+
+app.controller('FavoritesCtrl',['$scope', '$http', function ($scope, $http) {
+	$scope.favorites = [];
+	$http.get('/api/gifs')
+	 .then(function (response) {
+	 	$scope.favorites = response.data.results;
+	 	if (response.data.results.length > 0) {
+			$scope.minHeight = $scope.gifs.sort(function (a,b) {
+				return Number(a.images.downsized.height) - Number(b.images.downsized.height);
+			})[0].images.downsized.height + 'px';
+		}
+	 }, function (error) {
+	 	console.log(error);
+	 });
 }]);

@@ -1,0 +1,15 @@
+<div class="row" ng-if="favorites.length > 0">
+	<h3 class="text-center">Our Favorite Gifs</h3>
+  <div class="col-md-3 col-xs-4" ng-repeat="favorite in favorites">
+    <div class="thumbnail">
+      <img ng-src="{{favorite.url}}"  style="height: {{minHeight}}">
+      <br>
+      <p>Keyword: <i>{{favorite.keyword}}</i></p>
+      <p>Added: {{favorite.imported}}</p>
+    </div>
+  </div>
+</div>
+<div class="row" ng-if="favorites.length == 0">
+  <h3 class="text-center">No Favorites Gifs Found.</h3>
+  <h5 class="text-center">Search for gif and favorite them <a href="/">here</a>.</h5>
+</div>
