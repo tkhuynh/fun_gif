@@ -28,8 +28,8 @@ app.get('/api/gifs', function (req, res) {
 	});
 });
 
-app.post('api/gifs', function (req, res) {
-	var newGif = new Photo(req.body);
+app.post('/api/gifs', function (req, res) {
+	var newGif = new Gif(req.body);
 	newGif.save(function (err, savedGif) {
 		if (err) {
 			res.status(500).json({error: err.message});

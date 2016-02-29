@@ -23,8 +23,9 @@ app.factory('Gif', ['$resource', function($resource) {
 
 app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http, Gif) {
 	$scope.gifs = [];
+	var keyword;
 	$scope.searchKeyword = function () {
-		var keyword = $scope.keyword;
+		keyword = $scope.keyword;
 		$scope.savedKeyword = keyword;
 		var url = 'http://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
 		console.log(url);
@@ -43,5 +44,20 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 				console.log(error);
 			}
 		);
+	};
+
+	$scope.saveGif = function (gif) {
+		gif.favorited = true;
+
+		var gifData = {
+			keyword: keyword,
+			url: gif.images.downsized.url,
+			imported: Date()
+		};
+		Gif.save(gifData, function (data) {
+			console.log("success");
+		}, function (error) {
+			console.log(error);
+		});
 	};
 }]);
