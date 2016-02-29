@@ -19,7 +19,7 @@ var Gif = require('./models/gif');
 // Set Up API
 
 app.get('/api/gifs', function (req, res) {
-	Gif.find(function (err, allGifs) {
+	Gif.find({}).sort({_id: -1}).exec(function (err, allGifs) {
 		if (err) {
 			res.status(500).json({error: err.message});
 		} else {

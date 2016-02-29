@@ -4,7 +4,8 @@ var mongoose = require('mongoose');
 var GifSchema = new Schema( {
 	keyword: String,
 	url: String,
-	imported: String
+	imported: String,
+	height: Number
 });
 
 var Gif = mongoose.model('Gif', GifSchema);
