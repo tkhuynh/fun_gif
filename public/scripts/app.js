@@ -40,12 +40,20 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 					}
 				}
 				$scope.gifs = data;
-				// find the minimum height of a gif to set height for the rest
-				if (data.length > 0) {
-					$scope.minHeight = $scope.gifs.sort(function (a,b) {
-						return Number(a.images.downsized.height) - Number(b.images.downsized.height);
-					})[0].images.downsized.height + 'px';
+				function getMinHeight() {
+					// find the minimum height of a gif to set height for the rest
+					if (data.length > 0) {
+						$scope.minHeight = $scope.gifs.sort(function (a,b) {
+							return Number(a.images.downsized.height) - Number(b.images.downsized.height);
+						})[0].images.downsized.height;
+						if ($scope.minHeight == 0) {
+							$scope.minHeight = "100 px";
+						} else {
+							$scope.minHeight = $scope.minHeight + "px";
+						}
+					}
 				}
+				getMinHeight();
 			}, function (error) {
 				console.log(error);
 			}
@@ -69,12 +77,7 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 					}
 				}
 				$scope.gifs = data;
-				// find the minimum height of a gif to set height for the rest
-				if (data.length > 0) {
-					$scope.minHeight = $scope.gifs.sort(function (a,b) {
-						return Number(a.images.downsized.height) - Number(b.images.downsized.height);
-					})[0].images.downsized.height + 'px';
-				}
+				getMinHeight();
 			}, function (error) {
 				console.log(error);
 			}
