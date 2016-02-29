@@ -29,7 +29,7 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 	$scope.gifs = [];
 	$scope.searched = false;
 	var keyword = greetings[randomNum(greetings)];
-	var url = 'http://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
+	var url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
 	$http.get(url)
 			.then(function (response) {
 				var data = response.data.data;
@@ -54,7 +54,7 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function ($scope, $http,
 	$scope.searchKeyword = function () {
 		keyword = $scope.keyword;
 		$scope.savedKeyword = keyword;
-		url = 'http://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
+		url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
 		console.log(url);
 
 		$http.get(url)
