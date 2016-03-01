@@ -68,8 +68,8 @@ app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 				.then(function() {
 					// set $scope.currentUser = null
 					$scope.currentUser = null;
-					// redirect to '/login'
-					$location.path('/login');
+					// redirect to root
+					$location.path('/');
 				});
 		};
 	}
@@ -156,21 +156,6 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 				}
 			}
 			$scope.gifs = data;
-
-			function getMinHeight() {
-				// find the minimum height of a gif to set height for the rest
-				if (data.length > 0) {
-					$scope.minHeight = $scope.gifs.sort(function(a, b) {
-						return Number(a.images.downsized.height) - Number(b.images.downsized.height);
-					})[0].images.downsized.height;
-					if ($scope.minHeight == 0) {
-						$scope.minHeight = "100 px";
-					} else {
-						$scope.minHeight = $scope.minHeight + "px";
-					}
-				}
-			}
-			getMinHeight();
 		}, function(error) {
 			console.log(error);
 		});
@@ -179,8 +164,14 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 		keyword = $scope.keyword;
 		$scope.savedKeyword = keyword;
 		url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
-		console.log(url);
-
+		$http.jsonp(url)
+			.then(function(response) {
+				// success callback
+				$scope.tag = '';
+				$scope.photos = response.data.data;
+			}, function(error) {
+				// error callback
+			});
 		$http.get(url)
 			.then(function(response) {
 				$scope.keyword = '';
@@ -193,13 +184,14 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 					}
 				}
 				$scope.gifs = data;
-				getMinHeight();
 			}, function(error) {
 				console.log(error);
-			});
+			}
+		);
 	};
-
+	$scope.saved = false;
 	$scope.saveGif = function(gif) {
+		$scope.saved = true;
 		gif.favorited = true;
 		timeStamp = new Date();
 		timeStamp = timeStamp.toLocaleDateString();
@@ -222,11 +214,6 @@ app.controller('FavoritesCtrl', ['$scope', '$http', function($scope, $http) {
 	$http.get('/api/gifs')
 		.then(function(response) {
 			$scope.favorites = response.data.results;
-			if (response.data.results.length > 0) {
-				$scope.minHeight = $scope.favorites.sort(function(a, b) {
-					return a.height - b.height;
-				})[0].height + 'px';
-			}
 		}, function(error) {
 			console.log(error);
 		});

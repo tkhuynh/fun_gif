@@ -8,10 +8,10 @@
 <div class="row" ng-if="!searched && gifs.length > 0">
   <div class="col-md-3 col-xs-4" ng-repeat="gif in gifs">
     <div class="thumbnail">
-      <img ng-src="{{gif.images.downsized.url}}"  style="height: {{minHeight}}">
+      <img ng-src="{{gif.images.downsized.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
       <p>
-        <a href="javascript:void(0)" ng-click="saveGif(gif)"> 
+        <a href="javascript:void(0)" ng-click="saveGif(gif)" ng-class="{disabled: gif.favorited}"> 
           <span class="glyphicon" ng-class="{'glyphicon-star': gif.favorited, 'glyphicon-star-empty': !gif.favorited}"></span>  
           favorite
         </a>
@@ -23,10 +23,10 @@
 	<h3 class="text-center">Results for {{savedKeyword}}</h3>
   <div class="col-md-3 col-xs-4" ng-repeat="gif in gifs">
     <div class="thumbnail">
-      <img ng-src="{{gif.images.downsized.url}}"  style="height: {{minHeight}}">
+      <img ng-src="{{gif.images.downsized.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
       <p>
-        <a href="javascript:void(0)" ng-click="saveGif(gif)"> 
+        <a href="javascript:void(0)" ng-click="saveGif(gif)" ng-class="{disabled: gif.favorited}"> 
           <span class="glyphicon" ng-class="{'glyphicon-star': gif.favorited, 'glyphicon-star-empty': !gif.favorited}"></span>  
           favorite
         </a>

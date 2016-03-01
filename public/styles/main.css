@@ -1,0 +1,8 @@
+.thumbnail img.gif {
+	height: 140px;
+	margin-bottom: 5px;
+}
+.disabled {
+  pointer-events: none;
+ 	cursor: default;
+}

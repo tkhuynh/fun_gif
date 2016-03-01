@@ -2,9 +2,8 @@
 	<h3 class="text-center">Our Favorite Gifs</h3>
   <div class="col-md-3 col-xs-4" ng-repeat="favorite in favorites">
     <div class="thumbnail">
-      <img ng-src="{{favorite.url}}"  style="height: {{minHeight}}">
+      <img ng-src="{{favorite.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
-      <br>
       <p>Keyword: <i>{{favorite.keyword}}</i><br>Added: {{favorite.imported}}</p>
     </div>
   </div>
