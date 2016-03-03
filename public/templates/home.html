@@ -5,6 +5,9 @@
   <input type="submit" value="search" class="btn btn-primary">
 </form>
 <hr>
+<div ng-show="!loaded" class="loading_holder">
+  <img src="images/loading.gif" class="loading">
+</div>
 <div class="row" ng-if="!searched && gifs.length > 0">
   <div class="col-md-3 col-xs-4" ng-repeat="gif in gifs">
     <div class="thumbnail">

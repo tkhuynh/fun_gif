@@ -146,6 +146,7 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 	var greetings = ['hello', 'nice day', 'good', 'nice', 'cute', 'thumb up', 'love', 'happy'];
 	$scope.gifs = [];
 	$scope.searched = false;
+	$scope.loaded = false;
 	var keyword = greetings[randomNum(greetings)];
 	var url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
 	$http({
@@ -161,12 +162,15 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 					data.pop();
 				}
 			}
+			$scope.loaded = true;
 			$scope.gifs = data;
 		}, function(error) {
 			console.log(error);
 		});
 
 	$scope.searchKeyword = function() {
+		$scope.gifs = [];
+		$scope.loaded = false;
 		keyword = $scope.keyword;
 		$scope.savedKeyword = keyword;
 		url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
@@ -185,6 +189,7 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 						data.pop();
 					}
 				}
+				$scope.loaded = true;
 				$scope.gifs = data;
 			}, function(error) {
 				console.log(error);
@@ -213,13 +218,14 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 
 app.controller('FavoritesCtrl', ['$scope', 'Gif',
 	function($scope, Gif) {
-		$scope.favorites = [];
-		Gif.query(function (data) {
-	    // success callback
-	    $scope.favorites = data;
-	  }, function (data) {
-	    // error callback
-	  });
+		$scope.loadFavorites = function () {
+			$scope.loaded = false;
+			Gif.query(function (data) {
+		    $scope.loaded = true;
+		    $scope.favorites = data;
+		  });
+		};
+		$scope.loadFavorites();
 
 		$scope.deleteGif = function (favorite) {
 			$scope.favorites = $scope.favorites.filter(function(book) {
