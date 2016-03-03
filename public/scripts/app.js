@@ -55,7 +55,6 @@ app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 						$auth.removeToken();
 					}
 				}, function(error) {
-					console.error(error);
 					$auth.removeToken();
 				});
 		};
@@ -146,7 +145,11 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 	$scope.searched = false;
 	var keyword = greetings[randomNum(greetings)];
 	var url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
-	$http.get(url)
+	$http({
+		  method: 'GET',
+		  url: url,
+		  skipAuthorization: true  // `Authorization: Bearer <token>` will not be sent on this request.
+		})
 		.then(function(response) {
 			var data = response.data.data;
 			// only need to return the number of gifs which can be divided by 4
@@ -164,15 +167,11 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 		keyword = $scope.keyword;
 		$scope.savedKeyword = keyword;
 		url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
-		$http.jsonp(url)
-			.then(function(response) {
-				// success callback
-				$scope.tag = '';
-				$scope.photos = response.data.data;
-			}, function(error) {
-				// error callback
-			});
-		$http.get(url)
+		$http({
+			method: 'GET',
+			url: url,
+			skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
+		})
 			.then(function(response) {
 				$scope.keyword = '';
 				$scope.searched = true;
