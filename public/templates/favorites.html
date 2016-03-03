@@ -4,7 +4,10 @@
     <div class="thumbnail">
       <img ng-src="{{favorite.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
-      <p>Keyword: <i>{{favorite.keyword}}</i><br>Added: {{favorite.imported}}</p>
+      <p>Keyword: <i>{{favorite.keyword}}</i>
+        <br>Added: {{favorite.imported}}
+        <br>username: {{favorite.owner.username}}
+      </p>
     </div>
   </div>
 </div>

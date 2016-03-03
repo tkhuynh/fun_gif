@@ -7,8 +7,7 @@ var userSchema = new Schema({
   updated: { type: Date },
   email: { type: String, unique: true, lowercase: true },
   password: { type: String, select: false },
-  displayName: String,
-  username: { type: String },
+  username: { type: String, unique: true, lowercase: true },
   picture: String,
   gifs: [{ type: Schema.Types.ObjectId, ref: 'Gif' }]
 });

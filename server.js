@@ -34,7 +34,7 @@ app.post('/auth/signup', function (req, res) {
       return res.status(409).send({ message: 'Email is already taken.' });
     }
     var user = new User({
-      displayName: req.body.displayName,
+      username: req.body.username,
       email: req.body.email,
       password: req.body.password
     });
@@ -73,7 +73,7 @@ app.put('/api/me', auth.ensureAuthenticated, function (req, res) {
     if (!user) {
       return res.status(400).send({ message: 'User not found.' });
     }
-    user.displayName = req.body.displayName || user.displayName;
+    user.username = req.body.username || user.username;
     user.email = req.body.email || user.email;
     user.save(function(err) {
       res.status(200).end();
@@ -82,7 +82,7 @@ app.put('/api/me', auth.ensureAuthenticated, function (req, res) {
 });
 
 app.get('/api/gifs', function (req, res) {
-	Gif.find({}).sort({_id: -1}).exec(function (err, allGifs) {
+	Gif.find({}).sort({_id: -1}).populate('owner').exec(function (err, allGifs) {
 		if (err) {
 			res.status(500).json({error: err.message});
 		} else {
@@ -91,15 +91,20 @@ app.get('/api/gifs', function (req, res) {
 	});
 });
 
-app.post('/api/gifs', function (req, res) {
-	var newGif = new Gif(req.body);
-	newGif.save(function (err, savedGif) {
-		if (err) {
-			res.status(500).json({error: err.message});
-		} else {
-			res.json(savedGif);
-		}
-	});
+app.post('/api/gifs', auth.ensureAuthenticated, function (req, res) {
+  User.findById(req.user, function (err, user) {
+  	var newGif = new Gif(req.body);
+    newGif.owner = user._id;
+  	newGif.save(function (err, savedGif) {
+  		if (err) {
+  			res.status(500).json({error: err.message});
+  		} else {
+        user.gifs.push(newGif);
+        user.save();
+  			res.json(savedGif);
+  		}
+  	});
+  });
 });
 
 app.get("*", function (req, res) {

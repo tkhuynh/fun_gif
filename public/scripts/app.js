@@ -86,6 +86,7 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 
 		$scope.signup = function() {
 			// signup (https://github.com/sahat/satellizer#authsignupuser-options)
+			console.log($scope.user)
 			$auth.signup($scope.user)
 				.then(function(response) {
 					// set token (https://github.com/sahat/satellizer#authsettokentoken)
@@ -213,6 +214,7 @@ app.controller('FavoritesCtrl', ['$scope', '$http', function($scope, $http) {
 	$http.get('/api/gifs')
 		.then(function(response) {
 			$scope.favorites = response.data.results;
+			console.log(response.data.results);
 		}, function(error) {
 			console.log(error);
 		});
