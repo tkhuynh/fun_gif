@@ -107,6 +107,22 @@ app.post('/api/gifs', auth.ensureAuthenticated, function (req, res) {
   });
 });
 
+app.delete('/api/gifs/:id', auth.ensureAuthenticated, function (req, res) {
+  var gifId = req.params.id;
+  User.findById(req.user, function (err, user) {
+    Gif.findById(gifId, function (err, foundGif) {
+      if (foundGif.owner.toString() === user._id.toString()) {
+        Gif.findOneAndRemove({
+          _id: gifId
+        }, function (err, deletedGif) {
+          user.gifs.splice(user.gifs.indexOf(gifId), 1);
+          user.save();
+        });
+      }
+    });
+  });
+});
+
 app.get("*", function (req, res) {
 	res.render("index");
 });

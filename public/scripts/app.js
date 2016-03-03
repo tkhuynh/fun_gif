@@ -36,9 +36,12 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 }]);
 
 app.factory('Gif', ['$resource', function($resource) {
-	return $resource('/api/gifs/:id', {
-		id: '@_id'
-	});
+	return $resource('/api/gifs/:id', { id: "@_id" }, {
+    query: {
+      isArray: true,
+      transformResponse: function(data) { return angular.fromJson(data).results; }
+    }
+  }); 
 }]);
 
 app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
@@ -86,7 +89,6 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 
 		$scope.signup = function() {
 			// signup (https://github.com/sahat/satellizer#authsignupuser-options)
-			console.log($scope.user)
 			$auth.signup($scope.user)
 				.then(function(response) {
 					// set token (https://github.com/sahat/satellizer#authsettokentoken)
@@ -209,13 +211,20 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 	};
 }]);
 
-app.controller('FavoritesCtrl', ['$scope', '$http', function($scope, $http) {
-	$scope.favorites = [];
-	$http.get('/api/gifs')
-		.then(function(response) {
-			$scope.favorites = response.data.results;
-			console.log(response.data.results);
-		}, function(error) {
-			console.log(error);
-		});
+app.controller('FavoritesCtrl', ['$scope', 'Gif',
+	function($scope, Gif) {
+		$scope.favorites = [];
+		Gif.query(function (data) {
+	    // success callback
+	    $scope.favorites = data;
+	  }, function (data) {
+	    // error callback
+	  });
+
+		$scope.deleteGif = function (favorite) {
+			$scope.favorites = $scope.favorites.filter(function(book) {
+				return book._id !== favorite._id;
+			});
+			Gif.delete({id: favorite._id});
+		};
 }]);
