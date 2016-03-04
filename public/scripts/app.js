@@ -34,6 +34,7 @@ app.config(['$routeProvider', '$locationProvider', '$authProvider', function($ro
 		requireBase: false
 	});
 
+	// Facebook
 	$authProvider.facebook({
 		clientId: '1698583787047335',
 	  name: 'facebook',
@@ -46,6 +47,22 @@ app.config(['$routeProvider', '$locationProvider', '$authProvider', function($ro
 	  display: 'popup',
 	  type: '2.0',
 	  popupOptions: { width: 580, height: 400 }
+	});
+
+	// Google
+	$authProvider.google({
+		clientId: '855838489218-q0dbbnl2uu2c4pqnrevpt1g2oe2fhif2.apps.googleusercontent.com',
+	  url: '/auth/google',
+	  authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+	  redirectUri: window.location.origin,
+	  requiredUrlParams: ['scope'],
+	  optionalUrlParams: ['display'],
+	  scope: ['profile', 'email'],
+	  scopePrefix: 'openid',
+	  scopeDelimiter: ' ',
+	  display: 'popup',
+	  type: '2.0',
+	  popupOptions: { width: 452, height: 633 }
 	});
 }]);
 

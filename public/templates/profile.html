@@ -1,7 +1,7 @@
-<p><strong>Email:</strong> {{currentUser.email}}</p>
+<p><strong>Name:</strong> {{currentUser.displayName}}</p>
 <p><strong>Username:</strong> {{currentUser.username}}</p>
 <p><strong>Joined:</strong> {{currentUser.created | date:'MMMM dd, yyyy'}}</p>
-<p><strong>Gifs:</strong> {{currentUser.gifs.length}}</p>
+<p><strong>Favorite Gifs:</strong> {{currentUser.gifs.length}}</p>
 
 <hr>
 <a href="#" ng-click="showEditForm=true" ng-hide="showEditForm" class="btn btn-default"><i class="fa fa-pencil"></i> Edit Profile</a>

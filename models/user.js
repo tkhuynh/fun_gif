@@ -11,6 +11,9 @@ var userSchema = new Schema({
   displayName: String,
   picture: String,
   facebook: String,
+  google: String,
+  github: String,
+  yahoo: String,
   gifs: [{ type: Schema.Types.ObjectId, ref: 'Gif' }]
 });
 
