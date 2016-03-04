@@ -64,16 +64,6 @@ app.config(['$routeProvider', '$locationProvider', '$authProvider', function($ro
 	  type: '2.0',
 	  popupOptions: { width: 452, height: 633 }
 	});
-
-	// // Twitter
-	// $authProvider.twitter({
-	//   url: '/auth/twitter',
-	//   authorizationEndpoint: 'https://api.twitter.com/oauth/authenticate',
-	//   redirectUri: window.location.origin,
-	//   type: '1.0',
-	//   popupOptions: { width: 495, height: 645 }
-	// });
-
 }]);
 
 app.factory('Gif', ['$resource', function($resource) {
