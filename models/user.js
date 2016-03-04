@@ -8,7 +8,9 @@ var userSchema = new Schema({
   email: { type: String, unique: true, lowercase: true },
   password: { type: String, select: false },
   username: { type: String, unique: true, lowercase: true },
+  displayName: String,
   picture: String,
+  facebook: String,
   gifs: [{ type: Schema.Types.ObjectId, ref: 'Gif' }]
 });
 

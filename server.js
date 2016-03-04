@@ -1,9 +1,12 @@
 var express = require("express"),
+    qs = require('querystring'),
 		app = express(),
 		bodyParser = require("body-parser"),
 		mongoose = require('mongoose'),
 		hbs = require('hbs'),
-		auth = require('./resources/auth');
+		auth = require('./resources/auth'),
+    request = require('request');
+    // config = require('./config');
 
 // require and load dotenv
 require('dotenv').load();
@@ -58,6 +61,69 @@ app.post('/auth/login', function (req, res) {
         return res.status(401).send({ message: 'Invalid email or password.' });
       }
       res.send({ token: auth.createJWT(user) });
+    });
+  });
+});
+
+app.post('/auth/facebook', function(req, res) {
+  var fields = ['id', 'email', 'first_name', 'last_name', 'link', 'name'];
+  var accessTokenUrl = 'https://graph.facebook.com/v2.5/oauth/access_token';
+  var graphApiUrl = 'https://graph.facebook.com/v2.5/me?fields=' + fields.join(',');
+  var params = {
+    code: req.body.code,
+    client_id: req.body.clientId,
+    client_secret: process.env.FACEBOOK_SECRET,
+    redirect_uri: req.body.redirectUri
+  };
+
+  // Step 1. Exchange authorization code for access token.
+  request.get({ url: accessTokenUrl, qs: params, json: true }, function(err, response, accessToken) {
+    if (response.statusCode !== 200) {
+      return res.status(500).send({ message: accessToken.error.message });
+    }
+
+    // Step 2. Retrieve profile information about the current user.
+    request.get({ url: graphApiUrl, qs: accessToken, json: true }, function(err, response, profile) {
+      if (response.statusCode !== 200) {
+        return res.status(500).send({ message: profile.error.message });
+      } console.log(profile);
+      if (req.header('Authorization')) {
+        User.findOne({ facebook: profile.id }, function(err, existingUser) {
+          if (existingUser) {
+            return res.status(409).send({ message: 'There is already a Facebook account that belongs to you' });
+          }
+          var token = req.header('Authorization').split(' ')[1];
+          var payload = jwt.decode(token, process.env.TOKEN_SECRET);
+          User.findById(payload.sub, function(err, user) {
+            if (!user) {
+              return res.status(400).send({ message: 'User not found' });
+            }
+            user.facebook = profile.id;
+            user.picture = user.picture || 'https://graph.facebook.com/v2.3/' + profile.id + '/picture?type=large';
+            user.displayName = user.displayName || profile.name;
+            user.save(function() {
+              var token = auth.createJWT(user);
+              res.send({ token: token });
+            });
+          });
+        });
+      } else {
+        // Step 3. Create a new user account or return an existing one.
+        User.findOne({ facebook: profile.id }, function(err, existingUser) {
+          if (existingUser) {
+            var token = auth.createJWT(existingUser);
+            return res.send({ token: token });
+          }
+          var user = new User();
+          user.facebook = profile.id;
+          user.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
+          user.displayName = profile.name;
+          user.save(function() {
+            var token = auth.createJWT(user);
+            res.send({ token: token });
+          });
+        });
+      }
     });
   });
 });

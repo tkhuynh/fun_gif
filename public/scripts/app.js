@@ -3,7 +3,7 @@ function randomNum(array) {
 }
 var app = angular.module('funGifApp', ['ngRoute', 'ngResource', 'satellizer']);
 
-app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+app.config(['$routeProvider', '$locationProvider', '$authProvider', function($routeProvider, $locationProvider, $authProvider) {
 	$routeProvider
 		.when('/', {
 			templateUrl: 'templates/home.html',
@@ -32,6 +32,20 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 	$locationProvider.html5Mode({
 		enabled: true,
 		requireBase: false
+	});
+
+	$authProvider.facebook({
+		clientId: '1698583787047335',
+	  name: 'facebook',
+	  url: '/auth/facebook',
+	  authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
+	  redirectUri: window.location.origin + '/',
+	  requiredUrlParams: ['display', 'scope'],
+	  scope: ['email'],
+	  scopeDelimiter: ',',
+	  display: 'popup',
+	  type: '2.0',
+	  popupOptions: { width: 580, height: 400 }
 	});
 }]);
 
@@ -72,71 +86,6 @@ app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 					$scope.currentUser = null;
 					// redirect to root
 					$location.path('/');
-				});
-		};
-	}
-]);
-
-app.controller('AuthCtrl', ['$scope', '$auth', '$location',
-	function($scope, $auth, $location) {
-		// if $scope.currentUser, redirect to '/profile'
-		if ($scope.currentUser) {
-			$location.path('/profile');
-		}
-
-		// clear sign up / login forms
-		$scope.user = {};
-
-		$scope.signup = function() {
-			// signup (https://github.com/sahat/satellizer#authsignupuser-options)
-			$auth.signup($scope.user)
-				.then(function(response) {
-					// set token (https://github.com/sahat/satellizer#authsettokentoken)
-					$auth.setToken(response.data.token);
-					// call $scope.isAuthenticated to set $scope.currentUser
-					$scope.isAuthenticated();
-					// clear sign up form
-					$scope.user = {};
-					// redirect to '/profile'
-					$location.path('/profile');
-				}, function(error) {
-					console.error(error);
-				});
-		};
-
-		$scope.login = function() {
-			// login (https://github.com/sahat/satellizer#authloginuser-options)
-			$auth.login($scope.user)
-				.then(function(response) {
-					// set token (https://github.com/sahat/satellizer#authsettokentoken)
-					$auth.setToken(response.data.token);
-					// call $scope.isAuthenticated to set $scope.currentUser
-					$scope.isAuthenticated();
-					// clear sign up form
-					$scope.user = {};
-					// redirect to '/profile'
-					$location.path('/profile');
-				}, function(error) {
-					console.error(error);
-				});
-		};
-	}
-]);
-
-app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location',
-	function($scope, $auth, $http, $location) {
-		// if user is not logged in, redirect to '/login'
-		if ($scope.currentUser === undefined) {
-			$location.path('/login');
-		}
-
-		$scope.editProfile = function() {
-			$http.put('/api/me', $scope.currentUser)
-				.then(function(response) {
-					$scope.showEditForm = false;
-				}, function(error) {
-					console.error(error);
-					$auth.removeToken();
 				});
 		};
 	}
@@ -234,3 +183,82 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif',
 			Gif.delete({id: favorite._id});
 		};
 }]);
+
+app.controller('AuthCtrl', ['$scope', '$auth', '$location',
+	function($scope, $auth, $location) {
+		// if $scope.currentUser, redirect to '/profile'
+		if ($scope.currentUser) {
+			$location.path('/profile');
+		}
+
+		// oauth
+		$scope.oauthLoading = false;
+		$scope.authenticate = function(provider) {
+			$scope.oauthLoading = true;
+      $auth.authenticate(provider)
+      	.then(function (response) {
+      		$scope.isAuthenticated();
+      		$location.path('/profile');
+      	});
+    };
+		// clear sign up / login forms
+		$scope.user = {};
+
+		$scope.signup = function() {
+			// signup (https://github.com/sahat/satellizer#authsignupuser-options)
+			$auth.signup($scope.user)
+				.then(function(response) {
+					// set token (https://github.com/sahat/satellizer#authsettokentoken)
+					$auth.setToken(response.data.token);
+					// call $scope.isAuthenticated to set $scope.currentUser
+					$scope.isAuthenticated();
+					// clear sign up form
+					$scope.user = {};
+					// redirect to '/profile'
+					$location.path('/profile');
+				}, function(error) {
+					console.error(error);
+				});
+		};
+
+		$scope.login = function() {
+			// login (https://github.com/sahat/satellizer#authloginuser-options)
+			$auth.login($scope.user)
+				.then(function(response) {
+					// set token (https://github.com/sahat/satellizer#authsettokentoken)
+					$auth.setToken(response.data.token);
+					// call $scope.isAuthenticated to set $scope.currentUser
+					$scope.isAuthenticated();
+					// clear sign up form
+					$scope.user = {};
+					// redirect to '/profile'
+					$location.path('/profile');
+				}, function(error) {
+					console.error(error);
+				});
+		};
+	}
+]);
+
+app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location',
+	function($scope, $auth, $http, $location) {
+		// if user is not logged in, redirect to '/login'
+		if ($scope.currentUser === undefined) {
+			$location.path('/login');
+		}
+		// make get request to get update info about user
+		$http.get('/api/me')
+			.then(function(response) {
+				$scope.currentUser = response.data;
+			});
+		$scope.editProfile = function() {
+			$http.put('/api/me', $scope.currentUser)
+				.then(function(response) {
+					$scope.showEditForm = false;
+				}, function(error) {
+					console.error(error);
+					$auth.removeToken();
+				});
+		};
+	}
+]);
