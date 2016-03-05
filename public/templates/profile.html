@@ -3,20 +3,18 @@
 </div>
 <div class="row">
   <div class="col-md-5">
-    <a href="#" ng-click="showEditForm=true" ng-hide="showEditForm" class="btn btn-default pull-right"><i class="fa fa-pencil"></i></a>
     <img src="{{currentUser.picture}}" class="img-responsive avatar img-rounded image-resize">
+    <a href="#" ng-click="showEditForm=true" ng-hide="showEditForm" class="btn btn-default pull-right"><i class="fa fa-pencil"></i></a>
     <h4 class="text-muted">{{currentUser.displayName}}</h4>
     <h5 class="text-muted"><strong>Username:</strong> {{currentUser.username}}</h5>
     <h5 class="text-muted"><i class="fa fa-envelope-o"></i> {{currentUser.email}}</h5>
     <h5 class="text-muted"><i class="fa fa-clock-o"></i> Joined on {{currentUser.created | date:'MMMM dd, yyyy'}}</h5>
     <div class="profile_fav">
       <div class="user-favs">
-        <strong class="fav-count">{{currentUser.gifs.length}}</strong>
+        <strong class="fav-count">{{currentUserGifs.length}}</strong>
         <span class="text-muted">Favorite Gifs</span>
       </div>
     </div>
-  </div>
-  <div class="col-md-7">
     <form ng-show="showEditForm" ng-submit="editProfile()">
       <div class="form-group">
         <label for="editDisplayName" class="text-muted">Full Name:</label>
@@ -33,6 +31,29 @@
       <input type="submit" value="Edit Profile" class="btn btn-success">&nbsp;
       <button ng-click="showEditForm=false" class="btn btn-default">Cancel</button>
     </form>
+  </div>
+  <div class="col-md-7">
+    <div class="row" ng-if="currentUserGifs.length > 0">
+      <div class="userFavGifs">
+        <h3 class="text-center text-muted">Your Favorite Gifs</h3>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-repeat="favorite in currentUserGifs">
+          <div class="thumbnail">
+            <img ng-src="{{favorite.url}}" class="gif">
+            <img src="images/giphy_logo.png" alt="">
+            <a href="javascript:void(0)" ng-click="deleteGif(favorite)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+            <p>Keyword: <i>{{favorite.keyword}}</i>
+              <br>Added: {{favorite.imported}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row text-center" ng-if="currentUserGifs.length == 0">
+      <img src="/images/laughter.png" alt="" id="laughter" class="img-responsive">
+      <br>
+      <br>
+      <a href="/" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-search"></span> Find Yours</a>
+    </div>
   </div>
 </div>
 

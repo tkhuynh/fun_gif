@@ -13,6 +13,9 @@
 }
 
 /*user profile*/
+.avatar, #laughter {
+  margin: 0 auto;
+}
 .user-favs {
 	float: left;
   width: 100%;
@@ -30,4 +33,8 @@
   font-size: 25px;
   font-weight: bold;
   line-height: 1;
+}
+.userFavGifs {
+  height: 600px;
+  overflow: scroll;
 }

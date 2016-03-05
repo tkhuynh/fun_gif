@@ -205,7 +205,13 @@ app.post('/auth/google', function(req, res) {
 // Ger logged in user profile
 app.get('/api/me', auth.ensureAuthenticated, function (req, res) {
   User.findById(req.user, function (err, user) {
-    res.send(user.populate('gifs'));
+    // res.send(user);
+    Gif.find({owner: user._id}, function (err, userGifs) {
+     res.send({
+        user: user,
+        userGifs: userGifs
+      });
+    });
   });
 });
 
@@ -215,7 +221,7 @@ app.put('/api/me', auth.ensureAuthenticated, function (req, res) {
     if (!user) {
       return res.status(400).send({ message: 'User not found.' });
     }
-    user.displayName = req.body.displayName || user.displayName,
+    user.displayName = req.body.displayName || user.displayName;
     user.username = req.body.username || user.username;
     user.email = req.body.email || user.email;
     user.save(function(err) {

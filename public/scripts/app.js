@@ -83,7 +83,7 @@ app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 				.then(function(response) {
 					// if response.data comes back, set $scope.currentUser = response.data
 					if (response.data) {
-						$scope.currentUser = response.data;
+						$scope.currentUser = response.data.user;
 					} else {
 						// otherwise remove token (https://github.com/sahat/satellizer#authremovetoken)
 						$auth.removeToken();
@@ -194,8 +194,8 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif',
 		$scope.loadFavorites();
 
 		$scope.deleteGif = function (favorite) {
-			$scope.favorites = $scope.favorites.filter(function(book) {
-				return book._id !== favorite._id;
+			$scope.favorites = $scope.favorites.filter(function(gif) {
+				return gif._id !== favorite._id;
 			});
 			Gif.delete({id: favorite._id});
 		};
@@ -223,8 +223,7 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 
 		$scope.signup = function() {
 			// signup (https://github.com/sahat/satellizer#authsignupuser-options)
-			$scope.user.picture = "/images/smile.png"
-			console.log($scope.user)
+			$scope.user.picture = "/images/smile.png";
 			$auth.signup($scope.user)
 				.then(function(response) {
 					// set token (https://github.com/sahat/satellizer#authsettokentoken)
@@ -259,8 +258,8 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 	}
 ]);
 
-app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location',
-	function($scope, $auth, $http, $location) {
+app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location', 'Gif',
+	function($scope, $auth, $http, $location, Gif) {
 		// if user is not logged in, redirect to '/login'
 		if ($scope.currentUser === undefined) {
 			$location.path('/login');
@@ -268,7 +267,8 @@ app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location',
 		// make get request to get update info about user
 		$http.get('/api/me')
 			.then(function(response) {
-				$scope.currentUser = response.data;
+				$scope.currentUser = response.data.user;
+				$scope.currentUserGifs = response.data.userGifs;
 			});
 		$scope.editProfile = function() {
 			$http.put('/api/me', $scope.currentUser)
@@ -278,6 +278,12 @@ app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location',
 					console.error(error);
 					$auth.removeToken();
 				});
+		};
+		$scope.deleteGif = function (favorite) {
+			$scope.currentUserGifs = $scope.currentUserGifs.filter(function(gif) {
+				return gif._id !== favorite._id;
+			});
+			Gif.delete({id: favorite._id});
 		};
 	}
 ]);
