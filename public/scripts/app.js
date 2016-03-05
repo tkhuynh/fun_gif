@@ -115,24 +115,26 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 	$scope.loaded = false;
 	var keyword = greetings[randomNum(greetings)];
 	var url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
-	$http({
-		  method: 'GET',
-		  url: url,
-		  skipAuthorization: true  // `Authorization: Bearer <token>` will not be sent on this request.
-		})
-		.then(function(response) {
-			var data = response.data.data;
-			// only need to return the number of gifs which can be divided by 4
-			if (data.length / 4 >= 1 && data.length % 4 !== 0) {
-				for (var counter = 0; counter < (data.length % 4); counter++) {
-					data.pop();
+	$scope.gifInit = function() {
+		$http({
+			  method: 'GET',
+			  url: url,
+			  skipAuthorization: true  // `Authorization: Bearer <token>` will not be sent on this request.
+			})
+			.then(function(response) {
+				var data = response.data.data;
+				// only need to return the number of gifs which can be divided by 4
+				if (data.length / 4 >= 1 && data.length % 4 !== 0) {
+					for (var counter = 0; counter < (data.length % 4); counter++) {
+						data.pop();
+					}
 				}
-			}
-			$scope.loaded = true;
-			$scope.gifs = data;
-		}, function(error) {
-			console.log(error);
-		});
+				$scope.loaded = true;
+				$scope.gifs = data;
+			}, function(error) {
+				console.log(error);
+			});
+	};
 
 	$scope.searchKeyword = function() {
 		$scope.gifs = [];
