@@ -206,7 +206,7 @@ app.post('/auth/google', function(req, res) {
 app.get('/api/me', auth.ensureAuthenticated, function (req, res) {
   User.findById(req.user, function (err, user) {
     // res.send(user);
-    Gif.find({owner: user._id}, function (err, userGifs) {
+    Gif.find().sort({_id: -1}).find({owner: user._id}, function (err, userGifs) {
      res.send({
         user: user,
         userGifs: userGifs
@@ -232,11 +232,17 @@ app.put('/api/me', auth.ensureAuthenticated, function (req, res) {
 
 // Get Users' Favorite Gifs
 app.get('/api/gifs', function (req, res) {
+  // for pagination
+  var pageNumber = req.query.page;
 	Gif.find({}).sort({_id: -1}).populate('owner').exec(function (err, allGifs) {
 		if (err) {
 			res.status(500).json({error: err.message});
 		} else {
-			res.json({results: allGifs});
+      resultsInPageNumber = allGifs.slice(12 * (pageNumber - 1), 12 * pageNumber);
+			res.json({
+        allGifsCount: allGifs.length,
+        resultsInPageNumber: resultsInPageNumber
+      });
 		}
 	});
 });

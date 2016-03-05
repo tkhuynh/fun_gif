@@ -1,7 +1,7 @@
 function randomNum(array) {
 	return Math.floor(Math.random() * array.length);
 }
-var app = angular.module('funGifApp', ['ngRoute', 'ngResource', 'satellizer']);
+var app = angular.module('funGifApp', ['ngRoute', 'ngResource', 'satellizer', 'angularUtils.directives.dirPagination']);
 
 app.config(['$routeProvider', '$locationProvider', '$authProvider', function($routeProvider, $locationProvider, $authProvider) {
 	$routeProvider
@@ -37,42 +37,52 @@ app.config(['$routeProvider', '$locationProvider', '$authProvider', function($ro
 	// Facebook
 	$authProvider.facebook({
 		clientId: '1698583787047335',
-	  name: 'facebook',
-	  url: '/auth/facebook',
-	  authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
-	  redirectUri: window.location.origin + '/',
-	  requiredUrlParams: ['display', 'scope'],
-	  scope: ['email'],
-	  scopeDelimiter: ',',
-	  display: 'popup',
-	  type: '2.0',
-	  popupOptions: { width: 580, height: 400 }
+		name: 'facebook',
+		url: '/auth/facebook',
+		authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
+		redirectUri: window.location.origin + '/',
+		requiredUrlParams: ['display', 'scope'],
+		scope: ['email'],
+		scopeDelimiter: ',',
+		display: 'popup',
+		type: '2.0',
+		popupOptions: {
+			width: 580,
+			height: 400
+		}
 	});
 
 	// Google
 	$authProvider.google({
 		clientId: '855838489218-q0dbbnl2uu2c4pqnrevpt1g2oe2fhif2.apps.googleusercontent.com',
-	  url: '/auth/google',
-	  authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
-	  redirectUri: window.location.origin,
-	  requiredUrlParams: ['scope'],
-	  optionalUrlParams: ['display'],
-	  scope: ['profile', 'email'],
-	  scopePrefix: 'openid',
-	  scopeDelimiter: ' ',
-	  display: 'popup',
-	  type: '2.0',
-	  popupOptions: { width: 452, height: 633 }
+		url: '/auth/google',
+		authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+		redirectUri: window.location.origin,
+		requiredUrlParams: ['scope'],
+		optionalUrlParams: ['display'],
+		scope: ['profile', 'email'],
+		scopePrefix: 'openid',
+		scopeDelimiter: ' ',
+		display: 'popup',
+		type: '2.0',
+		popupOptions: {
+			width: 452,
+			height: 633
+		}
 	});
 }]);
 
 app.factory('Gif', ['$resource', function($resource) {
-	return $resource('/api/gifs/:id', { id: "@_id" }, {
-    query: {
-      isArray: true,
-      transformResponse: function(data) { return angular.fromJson(data).results; }
-    }
-  }); 
+	return $resource('/api/gifs/:id', {
+		id: "@_id"
+	}, {
+		query: {
+			isArray: true,
+			transformResponse: function(data) {
+				return angular.fromJson(data).results;
+			}
+		}
+	});
 }]);
 
 app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
@@ -117,9 +127,9 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 	var url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
 	$scope.gifInit = function() {
 		$http({
-			  method: 'GET',
-			  url: url,
-			  skipAuthorization: true  // `Authorization: Bearer <token>` will not be sent on this request.
+				method: 'GET',
+				url: url,
+				skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
 			})
 			.then(function(response) {
 				var data = response.data.data;
@@ -143,10 +153,10 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 		$scope.savedKeyword = keyword;
 		url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
 		$http({
-			method: 'GET',
-			url: url,
-			skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
-		})
+				method: 'GET',
+				url: url,
+				skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
+			})
 			.then(function(response) {
 				$scope.keyword = '';
 				$scope.searched = true;
@@ -161,8 +171,7 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 				$scope.gifs = data;
 			}, function(error) {
 				console.log(error);
-			}
-		);
+			});
 	};
 	$scope.saved = false;
 	$scope.saveGif = function(gif) {
@@ -184,24 +193,40 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, 
 	};
 }]);
 
-app.controller('FavoritesCtrl', ['$scope', 'Gif',
-	function($scope, Gif) {
-		$scope.loadFavorites = function () {
-			$scope.loaded = false;
-			Gif.query(function (data) {
-		    $scope.loaded = true;
-		    $scope.favorites = data;
-		  });
-		};
-		$scope.loadFavorites();
+app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http',
+	function($scope, Gif, $http) {
 
-		$scope.deleteGif = function (favorite) {
+		$scope.loaded = false;
+		$scope.totalFavorites = 0;
+		$scope.favoritesPerPage = 12; // this should match however many results your API puts on one page
+		getResultsPage(1);
+
+		$scope.pagination = {
+			current: 1
+		};
+
+		$scope.pageChanged = function(newPageNumber) {
+			getResultsPage(newPageNumber);
+		};
+		function getResultsPage(pageNumber) {
+			$http.get('/api/gifs?page=' + pageNumber, {page: pageNumber})
+				.then(function(response) {
+					$scope.favorites = response.data.resultsInPageNumber;
+					$scope.totalFavorites = response.data.allGifsCount;
+					$scope.loaded = true;
+				});
+		}
+
+		$scope.deleteGif = function(favorite) {
 			$scope.favorites = $scope.favorites.filter(function(gif) {
 				return gif._id !== favorite._id;
 			});
-			Gif.delete({id: favorite._id});
+			Gif.delete({
+				id: favorite._id
+			});
 		};
-}]);
+	}
+]);
 
 app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 	function($scope, $auth, $location) {
@@ -214,12 +239,12 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 		$scope.oauthLoading = false;
 		$scope.authenticate = function(provider) {
 			$scope.oauthLoading = true;
-      $auth.authenticate(provider)
-      	.then(function (response) {
-      		$scope.isAuthenticated();
-      		$location.path('/profile');
-      	});
-    };
+			$auth.authenticate(provider)
+				.then(function(response) {
+					$scope.isAuthenticated();
+					$location.path('/profile');
+				});
+		};
 		// clear sign up / login forms
 		$scope.user = {};
 
@@ -281,11 +306,13 @@ app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location', 'Gif',
 					$auth.removeToken();
 				});
 		};
-		$scope.deleteGif = function (favorite) {
+		$scope.deleteGif = function(favorite) {
 			$scope.currentUserGifs = $scope.currentUserGifs.filter(function(gif) {
 				return gif._id !== favorite._id;
 			});
-			Gif.delete({id: favorite._id});
+			Gif.delete({
+				id: favorite._id
+			});
 		};
 	}
 ]);
