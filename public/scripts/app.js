@@ -118,80 +118,86 @@ app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 	}
 ]);
 
-app.controller('SearchCtrl', ['$scope', '$http', 'Gif', function($scope, $http, Gif) {
-	var greetings = ['hello', 'nice day', 'good', 'nice', 'cute', 'thumb up', 'love', 'happy'];
-	$scope.gifs = [];
-	$scope.searched = false;
-	$scope.loaded = false;
-	var keyword = greetings[randomNum(greetings)];
-	var url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
-	$scope.gifInit = function() {
-		$http({
-				method: 'GET',
-				url: url,
-				skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
-			})
-			.then(function(response) {
-				var data = response.data.data;
-				// only need to return the number of gifs which can be divided by 4
-				if (data.length / 4 >= 1 && data.length % 4 !== 0) {
-					for (var counter = 0; counter < (data.length % 4); counter++) {
-						data.pop();
-					}
-				}
-				$scope.loaded = true;
-				$scope.gifs = data;
-			}, function(error) {
-				console.log(error);
-			});
-	};
-
-	$scope.searchKeyword = function() {
+app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location',
+	function($scope, $http, Gif, $location) {
+		var greetings = ['hello', 'nice day', 'good', 'nice', 'cute', 'thumb up', 'love', 'happy'];
 		$scope.gifs = [];
+		$scope.searched = false;
 		$scope.loaded = false;
-		keyword = $scope.keyword;
-		$scope.savedKeyword = keyword;
-		url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
-		$http({
-				method: 'GET',
-				url: url,
-				skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
-			})
-			.then(function(response) {
-				$scope.keyword = '';
-				$scope.searched = true;
-				var data = response.data.data;
-				// only need to return the number of gifs which can be divided by 4
-				if (data.length / 4 >= 1 && data.length % 4 !== 0) {
-					for (var counter = 0; counter < (data.length % 4); counter++) {
-						data.pop();
+		var keyword = greetings[randomNum(greetings)];
+		var url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
+		$scope.gifInit = function() {
+			$http({
+					method: 'GET',
+					url: url,
+					skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
+				})
+				.then(function(response) {
+					var data = response.data.data;
+					// only need to return the number of gifs which can be divided by 4
+					if (data.length / 4 >= 1 && data.length % 4 !== 0) {
+						for (var counter = 0; counter < (data.length % 4); counter++) {
+							data.pop();
+						}
 					}
-				}
-				$scope.loaded = true;
-				$scope.gifs = data;
-			}, function(error) {
-				console.log(error);
-			});
-	};
-	$scope.saved = false;
-	$scope.saveGif = function(gif) {
-		$scope.saved = true;
-		gif.favorited = true;
-		timeStamp = new Date();
-		timeStamp = timeStamp.toLocaleDateString();
-		var gifData = {
-			keyword: keyword,
-			url: gif.images.downsized.url,
-			imported: timeStamp,
-			height: Number(gif.images.downsized.height)
+					$scope.loaded = true;
+					$scope.gifs = data;
+				}, function(error) {
+					console.log(error);
+				});
 		};
-		Gif.save(gifData, function(data) {
-			console.log("success");
-		}, function(error) {
-			console.log(error);
-		});
-	};
-}]);
+
+		$scope.searchKeyword = function() {
+			$scope.gifs = [];
+			$scope.loaded = false;
+			keyword = $scope.keyword;
+			$scope.savedKeyword = keyword;
+			url = 'https://api.giphy.com/v1/gifs/search?q=' + keyword + '&api_key=dc6zaTOxFJmzC';
+			$http({
+					method: 'GET',
+					url: url,
+					skipAuthorization: true // `Authorization: Bearer <token>` will not be sent on this request.
+				})
+				.then(function(response) {
+					$scope.keyword = '';
+					$scope.searched = true;
+					var data = response.data.data;
+					// only need to return the number of gifs which can be divided by 4
+					if (data.length / 4 >= 1 && data.length % 4 !== 0) {
+						for (var counter = 0; counter < (data.length % 4); counter++) {
+							data.pop();
+						}
+					}
+					$scope.loaded = true;
+					$scope.gifs = data;
+				}, function(error) {
+					console.log(error);
+				});
+		};
+		$scope.saved = false;
+		$scope.saveGif = function(gif) {
+			if ($scope.currentUser) {
+				$scope.saved = true;
+				gif.favorited = true;
+				timeStamp = new Date();
+				timeStamp = timeStamp.toLocaleDateString();
+				var gifData = {
+					keyword: keyword,
+					url: gif.images.downsized.url,
+					imported: timeStamp,
+					height: Number(gif.images.downsized.height)
+				};
+				Gif.save(gifData, function(data) {
+					console.log("success");
+				}, function(error) {
+					console.log(error);
+				});
+			} else {
+				$scope.signupMsg = true;
+			}
+		};
+	}
+]);
 
 app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http',
 	function($scope, Gif, $http) {
@@ -208,8 +214,11 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http',
 		$scope.pageChanged = function(newPageNumber) {
 			getResultsPage(newPageNumber);
 		};
+
 		function getResultsPage(pageNumber) {
-			$http.get('/api/gifs?page=' + pageNumber, {page: pageNumber})
+			$http.get('/api/gifs?page=' + pageNumber, {
+					page: pageNumber
+				})
 				.then(function(response) {
 					$scope.favorites = response.data.resultsInPageNumber;
 					$scope.totalFavorites = response.data.allGifsCount;
