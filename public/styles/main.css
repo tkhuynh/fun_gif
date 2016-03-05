@@ -11,3 +11,23 @@
 	display: block;
 	margin: 0 auto;
 }
+
+/*user profile*/
+.user-favs {
+	float: left;
+  width: 100%;
+}
+.profile_fav {
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 55px;
+  text-align: center;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+.fav-count {
+  display: block;
+  font-size: 25px;
+  font-weight: bold;
+  line-height: 1;
+}

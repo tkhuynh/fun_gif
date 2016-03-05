@@ -1,18 +1,39 @@
-<p><strong>Name:</strong> {{currentUser.displayName}}</p>
-<p><strong>Username:</strong> {{currentUser.username}}</p>
-<p><strong>Joined:</strong> {{currentUser.created | date:'MMMM dd, yyyy'}}</p>
-<p><strong>Favorite Gifs:</strong> {{currentUser.gifs.length}}</p>
-
-<hr>
-<a href="#" ng-click="showEditForm=true" ng-hide="showEditForm" class="btn btn-default"><i class="fa fa-pencil"></i> Edit Profile</a>
-
-<form ng-show="showEditForm" ng-submit="editProfile()">
-  <div class="form-group">
-    <input type="text" ng-model="currentUser.username" class="form-control" placeholder="Username">
+<div ng-if="currentUser.username == currentUser.google || currentUser.username == currentUser.facebook">
+	<div class="alert alert-warning"><strong>FYI!</strong> You can edit your randomly pick username!</div>
+</div>
+<div class="row">
+  <div class="col-md-5">
+    <a href="#" ng-click="showEditForm=true" ng-hide="showEditForm" class="btn btn-default pull-right"><i class="fa fa-pencil"></i></a>
+    <img src="{{currentUser.picture}}" class="img-responsive avatar img-rounded image-resize">
+    <h4 class="text-muted">{{currentUser.displayName}}</h4>
+    <h5 class="text-muted"><strong>Username:</strong> {{currentUser.username}}</h5>
+    <h5 class="text-muted"><i class="fa fa-envelope-o"></i> {{currentUser.email}}</h5>
+    <h5 class="text-muted"><i class="fa fa-clock-o"></i> Joined on {{currentUser.created | date:'MMMM dd, yyyy'}}</h5>
+    <div class="profile_fav">
+      <div class="user-favs">
+        <strong class="fav-count">{{currentUser.gifs.length}}</strong>
+        <span class="text-muted">Favorite Gifs</span>
+      </div>
+    </div>
   </div>
-  <div class="form-group">
-    <input type="text" ng-model="currentUser.email" class="form-control" placeholder="Email">
+  <div class="col-md-7">
+    <form ng-show="showEditForm" ng-submit="editProfile()">
+      <div class="form-group">
+        <label for="editDisplayName" class="text-muted">Full Name:</label>
+        <input type="text" id="editDisplayName" ng-model="currentUser.displayName" class="form-control" placeholder="Full Name">
+      </div>
+      <div class="form-group">
+        <label for="editUsername" class="text-muted">Username:</label>
+        <input type="text" id="editUsername" ng-model="currentUser.username" class="form-control" placeholder="Username">
+      </div>
+      <div class="form-group">
+        <label for="editEmail" class="text-muted">Email: </label>
+        <input type="text" id="editEmail" ng-model="currentUser.email" class="form-control" placeholder="Email">
+      </div>
+      <input type="submit" value="Edit Profile" class="btn btn-success">&nbsp;
+      <button ng-click="showEditForm=false" class="btn btn-default">Cancel</button>
+    </form>
   </div>
-  <input type="submit" value="Edit Profile" class="btn btn-info">&nbsp;
-  <button ng-click="showEditForm=false" class="btn btn-default">Cancel</button>
-</form>
+</div>
+
+

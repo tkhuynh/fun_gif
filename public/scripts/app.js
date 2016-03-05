@@ -223,6 +223,8 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 
 		$scope.signup = function() {
 			// signup (https://github.com/sahat/satellizer#authsignupuser-options)
+			$scope.user.picture = "/images/smile.png"
+			console.log($scope.user)
 			$auth.signup($scope.user)
 				.then(function(response) {
 					// set token (https://github.com/sahat/satellizer#authsettokentoken)
