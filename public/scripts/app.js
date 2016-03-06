@@ -87,6 +87,7 @@ app.factory('Gif', ['$resource', function($resource) {
 
 app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 	function($scope, $auth, $http, $location) {
+		$scope.layout = "test.css";
 		$scope.isAuthenticated = function() {
 			// send GET request to '/api/me'
 			$http.get('/api/me')
@@ -220,8 +221,6 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 		};
 
 		$scope.pageChanged = function(newPageNumber) {
-			$location.hash('top');
-			$anchorScroll();
 			getResultsPage(newPageNumber);
 		};
 
@@ -230,6 +229,8 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 					page: pageNumber
 				})
 				.then(function(response) {
+					$location.hash('top');
+					$anchorScroll();
 					$scope.favorites = response.data.resultsInPageNumber;
 					$scope.totalFavorites = response.data.allGifsCount;
 					$scope.loaded = true;

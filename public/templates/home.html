@@ -6,8 +6,8 @@
 </form>
 <hr>
 <div class="alert alert-warning" ng-show="signupMsg">Please sign up to save your favorites. <a href="/signup">Sign up</a>.</div>
-<div ng-show="!loaded" class="loading_holder">
-  <img src="images/loading.gif" class="loading">
+<div ng-show="!loaded" class="loading_holder text-center">
+  <img src="images/loading.gif" class="loading img-responsive">
 </div>
 <div class="row" ng-if="!searched" ng-init="gifInit()">
   <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-repeat="gif in gifs">

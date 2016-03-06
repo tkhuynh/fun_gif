@@ -1,3 +1,31 @@
+body {
+  background: -moz-linear-gradient(left, #2ad3c8 0%, #2a91e0 45%, #2490e2 57%, #76d7db 100%);
+  background: -webkit-linear-gradient(left, #2ad3c8 0%,#2a91e0 45%,#2490e2 57%,#76d7db 100%);
+  background: linear-gradient(to right, #2ad3c8 0%,#2a91e0 45%,#2490e2 57%,#76d7db 100%);
+}
+h1 {
+  margin-top: 10px;
+  font-size: 38px;
+  font-weight: 100;
+  color: #fff;
+  line-height: 50px;
+}
+
+h3 {
+  font-size: 22px;
+  font-weight: 300;
+  color: #fff;
+  line-height: 30px;
+}
+.navbar-default {
+  border-radius: 0;
+  box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
+}
+/* thumbnails and loading gif*/
+.thumbnail {
+  box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
+  border-radius: 0;
+}
 .thumbnail img.gif {
 	height: 140px;
 	margin-bottom: 5px;
@@ -13,6 +41,20 @@
 }
 
 /*user profile*/
+#profile-info {
+  position: relative;
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
+}
+#profile-info form {
+  text-align: left;
+}
+.edit-profile-btn {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+}
 .avatar, #laughter {
   margin: 0 auto;
 }
@@ -35,6 +77,159 @@
   line-height: 1;
 }
 .userFavGifs {
+  box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
   height: 600px;
   overflow: scroll;
+}
+
+/* login signup */
+
+.login-signup-form a, .login-signup-form a:hover, .login-signup-form a:focus {
+  color: #de615e;
+  text-decoration: none;
+}
+
+.login-signup-form .btn-large {
+  display: inline-block;
+  height: 50px;
+  margin: 5px;
+  padding: 15px 20px 0 20px;
+  border: 1px solid #fff;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 16px;
+  color: #fff;
+  border-radius: 4px;
+  opacity: 0.9;
+}
+.login-signup-form .btn-large:hover, .login-signup-form .btn-large:focus, 
+.login-signup-form .btn-large:active, .login-signup-form .btn-large:active:focus {
+  outline: 0; 
+  opacity: 1;
+  color: white;
+}
+.login-signup-form .btn-facebook {
+  background: #3B579D;
+}
+.login-signup-form .btn-google {
+  background: #DC4B3E;
+}
+.login-signup-form .inner-bg {
+    padding: 0px 0 50px 0;
+}
+
+.login-signup-form .top-content .text h1 {
+  color: #333;
+}
+
+.login-signup-form .form-box {
+  margin-top: 5px;
+}
+
+.login-signup-form .form-top {
+  overflow: hidden;
+  padding: 0 25px 15px 25px;
+  background: #444;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px 4px 0 0;
+  text-align: left;
+}
+
+.login-signup-form .form-top-left {
+  float: left;
+  width: 75%;
+  padding-top: 25px;
+}
+
+.login-signup-form .form-top-left h3 {
+  margin-top: 0;
+}
+.login-signup-form .form-top-left p {
+  opacity: 0.8; color: #fff;
+}
+
+.login-signup-form .form-top-right {
+  float: left;
+  width: 25%;
+  padding-top: 5px;
+  font-size: 66px;
+  color: #fff;
+  line-height: 100px;
+  text-align: right;
+  opacity: 0.3;
+}
+
+.login-signup-form .form-body {
+  padding: 25px 25px 30px 25px;
+  background: #444;
+  background: rgba(0, 0, 0, 0.3);
+  text-align: left;
+}
+
+.login-signup-form .form-body p {
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.login-signup-form .form-body form textarea {
+  height: 100px;
+}
+
+.login-signup-form .form-body form button.btn {
+  width: 100%;
+}
+
+.login-signup-form .form-body form .input-error {
+  border-color: #de615e;
+}
+
+.login-signup-form .form-bottom {
+  overflow: hidden;
+  padding: 0 25px 15px 25px;
+  background: #444;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 0 0 4px 4px;
+}
+
+.social-login-buttons {
+  margin-top: 10px;
+}
+
+
+/***** Media queries *****/
+
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .userFavGifs {
+    height: 100%;
+    overflow-x: hidden; 
+    overflow-y: hidden;
+  }
+  #profile-info {
+    text-align: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .userFavGifs {
+    height: 100%;
+    overflow-x: hidden; 
+    overflow-y: hidden;
+  }
+  .loading {
+    width: 150px;
+  }
+  .login-signup-form .inner-bg {
+    padding: 0;
+  }
+
+}
+
+@media (max-width: 415px) {
+  
+  .login-signup-form h1 {
+    font-size: 32px;
+  }
+
 }

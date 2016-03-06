@@ -1,19 +1,54 @@
-<h3 class="text-center">Welcome!</h3>
-<hr>
-<form ng-submit="signup()">
-  <div class="form-group">
-    <input type="text" ng-model="user.displayName" class="form-control" placeholder="Full Name">
+<div class="top-content login-signup-form">
+  <div class="inner-bg">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 text text-center">
+          <h1>Join and Laugh With Us</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3 form-box">
+          <div class="form-top">
+            <div class="form-top-left">
+              <h3>Signup to our site</h3>
+              <p><strong>Attention: </strong>All fields are required.</p>
+            </div>
+            <div class="form-top-right">
+              <i class="fa fa-check-square"></i>
+            </div>
+          </div>
+          <div class="form-body">
+            <form ng-submit="signup()">
+              <div class="form-group">
+                <input type="text" ng-model="user.displayName" class="form-control" placeholder="Full Name" autofocus required>
+              </div>
+              <div class="form-group">
+                <input type="text" ng-model="user.username" class="form-control" placeholder="Username" required>
+              </div>
+              <div class="form-group">
+                <input type="text" ng-model="user.email" class="form-control" placeholder="Email" required>
+              </div>
+              <div class="form-group">
+                <input type="password" ng-model="user.password" class="form-control" placeholder="Password" required>
+              </div>
+              <input type="submit" value="Sign In" class="btn form-control">
+            </form>
+            <br>
+            <p class="text-muted text-center">Already have an account? <a href="/login">Log In Here</a></p>
+          </div>
+          <div class="form-bottom text-center social-login">
+            <h3>...or signup/login with:</h3>
+            <div class="social-login-buttons">
+              <a class="btn btn-large btn-facebook" href="javascript:void(0)" ng-click="authenticate('facebook')">
+                <i class="fa fa-facebook"></i> Facebook
+              </a>
+              <a class="btn btn-large btn-google" href="javascript:void(0)" ng-click="authenticate('google')">
+                <i class="fa fa-google"></i> Google
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="form-group">
-    <input type="text" ng-model="user.username" class="form-control" placeholder="Username">
-  </div>
-  <div class="form-group">
-    <input type="text" ng-model="user.email" class="form-control" placeholder="Email">
-  </div>
-  <div class="form-group">
-    <input type="password" ng-model="user.password" class="form-control" placeholder="Password">
-  </div>
-  <input type="submit" value="Sign Up" class="btn btn-block btn-info">
-</form>
-<br>
-<p class="text-muted">Already have an account? <a href="/login">Log in here.</a></p>
+</div>
