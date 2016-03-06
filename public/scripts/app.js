@@ -118,8 +118,8 @@ app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 	}
 ]);
 
-app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location',
-	function($scope, $http, Gif, $location) {
+app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScroll',
+	function($scope, $http, Gif, $location, $anchorScroll) {
 		var greetings = ['hello', 'nice day', 'good', 'nice', 'cute', 'thumb up', 'love', 'happy'];
 		$scope.gifs = [];
 		$scope.searched = false;
@@ -193,14 +193,22 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location',
 					console.log(error);
 				});
 			} else {
+				/* Scrolling and then resetting the $location.hash() so angular does not 
+				perceive a change in url seems to work.
+				http://stackoverflow.com/questions/17711232/scroll-to-in-angularjs#answer-18490385
+				*/
+				var old = $location.hash();
+				$location.hash('forSignupMsgAnchor');
+				$anchorScroll();
+				$location.hash(old);
 				$scope.signupMsg = true;
 			}
 		};
 	}
 ]);
 
-app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http',
-	function($scope, Gif, $http) {
+app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchorScroll',
+	function($scope, Gif, $http, $location, $anchorScroll) {
 
 		$scope.loaded = false;
 		$scope.totalFavorites = 0;
@@ -212,6 +220,8 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http',
 		};
 
 		$scope.pageChanged = function(newPageNumber) {
+			$location.hash('top');
+			$anchorScroll();
 			getResultsPage(newPageNumber);
 		};
 

@@ -2,15 +2,16 @@
   <img src="images/loading.gif" class="loading">
 </div>
 <div class="row" ng-if="favorites.length > 0">
-	<h3 class="text-center">Our Favorite Gifs</h3>
+  <a id="top"></a>
+	<h3 class="text-center" id="favoriteTopAnchor">Our Favorite Gifs</h3>
   <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" dir-paginate="favorite in favorites | itemsPerPage: favoritesPerPage" total-items="totalFavorites" current-page="pagination.current">
     <div class="thumbnail">
       <img ng-src="{{favorite.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
       <a ng-show="currentUser._id === favorite.owner._id" href="javascript:void(0)" ng-click="deleteGif(favorite)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
-      <p>Keyword: <i>{{favorite.keyword}}</i>
-        <br>Added: {{favorite.imported}}
-        <br>Posted by: {{favorite.owner.username}}
+      <p><i class="fa fa-search"></i> <i>{{favorite.keyword}}</i>
+        <br><i class="fa fa-clock-o"></i> {{favorite.imported}}
+        <br><i class="fa fa-user"></i> {{favorite.owner.username}}
       </p>
     </div>
   </div>
