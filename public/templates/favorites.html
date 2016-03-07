@@ -8,7 +8,8 @@
     <div class="thumbnail">
       <img ng-src="{{favorite.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
-      <a ng-show="currentUser._id === favorite.owner._id" href="javascript:void(0)" ng-click="deleteGif(favorite)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+      <a href="javascript:void(0)" ng-click="likeGif(favorite)"><i class="fa" ng-class="{'fa-heart pull-right': gif.liked, 'fa-heart-o pull-right': !gif.liked}"></i></a>  
+      <a ng-show="currentUser._id === favorite.owner._id" href="javascript:void(0)" ng-click="deleteGif(favorite)"><span class="fa fa-trash pull-right"></span></a>
       <p><i class="fa fa-search"></i> <i>{{favorite.keyword}}</i>
         <br><i class="fa fa-clock-o"></i> {{favorite.imported}}
         <br><i class="fa fa-user"></i> {{favorite.owner.username}}

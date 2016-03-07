@@ -9,7 +9,8 @@ var GifSchema = new Schema( {
 	owner: {
 		type: Schema.Types.ObjectId,
 		ref: "User"
-	}
+	},
+	voters: [{ type: Schema.Types.ObjectId, ref: 'Like' }]
 });
 
 var Gif = mongoose.model('Gif', GifSchema);

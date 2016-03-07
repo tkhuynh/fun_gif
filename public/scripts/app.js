@@ -85,6 +85,19 @@ app.factory('Gif', ['$resource', function($resource) {
 	});
 }]);
 
+app.factory('Like', ['$resource', function($resource) {
+	return $resource('/api/likes/:id', {
+		id: "@_id"
+	}, {
+		query: {
+			isArray: true,
+			transformResponse: function(data) {
+				return angular.fromJson(data).results;
+			}
+		}
+	});
+}]);
+
 app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 	function($scope, $auth, $http, $location) {
 		$scope.layout = "test.css";
@@ -208,9 +221,8 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScr
 	}
 ]);
 
-app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchorScroll',
-	function($scope, Gif, $http, $location, $anchorScroll) {
-
+app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchorScroll', 'Like',
+	function($scope, Gif, $http, $location, $anchorScroll, Like) {
 		$scope.loaded = false;
 		$scope.totalFavorites = 0;
 		$scope.favoritesPerPage = 12; // this should match however many results your API puts on one page
@@ -243,6 +255,18 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 			});
 			Gif.delete({
 				id: favorite._id
+			});
+		};
+
+		$scope.likeGif = function(gif) {
+			var savedLike = {
+				gif_id: gif._id,
+				voter_id: $scope.currentUser._id
+			};
+			Like.save({gifId: gif._id}, savedLike, function(data) {
+				console.log("liked");
+			}, function(err) {
+				console.log(err);
 			});
 		};
 	}

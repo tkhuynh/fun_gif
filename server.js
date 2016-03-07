@@ -257,7 +257,7 @@ app.post('/api/gifs', auth.ensureAuthenticated, function (req, res) {
   		if (err) {
   			res.status(500).json({error: err.message});
   		} else {
-        user.gifs.push(newGif);
+        user.gifs.push(savedGif);
         user.save();
   			res.json(savedGif);
   		}
@@ -284,26 +284,42 @@ app.delete('/api/gifs/:id', auth.ensureAuthenticated, function (req, res) {
 
 // Create Like
 app.post('/api/likes', auth.ensureAuthenticated, function (req, res) {
-  var gifId = req.params.id;
-  User.findById(req.user, function (err, user) {
-    Like.find({gif_id: gifId, voter_id: user._id}, function (err, foundLike) {
-      if (err) {
-        res.status(500).json({error: err.message});
-      } else {
-        if (foundLike) {
-          Like.findOneAndRemove({id: foundLike._id});
-        } else {
-          var newLike = new Like(req.body);
-          newLike.save(function (err, savedLike) {
-            if (err) {
-              res.status(500).json({error: err.message});
-            } else {
-              console.log(savedLike);
-            }
+  var gifId = req.body.gif_id;
+  var userId = req.user;
+  // check if user have liked this gif or not
+  Like.find({gif_id: gifId, voter_id: userId}, function (err, foundLike) {
+    if (err) {
+      res.status(500).json({error: err.message});
+    } else {
+      // user haven't like this gif, create a like
+      if (foundLike.length === 0) {
+        var newLike = new Like(req.body);
+        newLike.save(function (err, savedLike) {
+          if (err) {
+            res.status(500).json({error: err.message});
+          } else {
+            // save like to voters attribute of gif
+            Gif.findById(gifId, function (err, foundGif) {
+              Gif.findById({_id: gifId}, function(err, foundGif) {
+                foundGif.voters.push(savedLike);
+                foundGif.save();
+              });
+            });
+          }
+        });
+      } 
+      // user have liked this gif, now unlike
+      else { 
+        Like.findOneAndRemove({_id: foundLike[0]._id}, function (err, deletedLike) {
+          // revove likr from voters attribute of gif
+          Gif.findById({_id: gifId}, function(err, foundGif) {
+            console.log(foundGif.voters.indexOf(deletedLike._id));
+            foundGif.voters.splice(foundGif.voters.indexOf(deletedLike._id), 1);
+            foundGif.save();
           });
-        }
+        });
       }
-    });
+    }
   });
 });
 
