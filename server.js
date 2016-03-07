@@ -27,6 +27,7 @@ mongoose.connect(
 
 var Gif = require('./models/gif');
 var User = require('./models/user');
+var Like = require('./models/like');
 
 // Set Up API
 
@@ -276,6 +277,31 @@ app.delete('/api/gifs/:id', auth.ensureAuthenticated, function (req, res) {
           user.gifs.splice(user.gifs.indexOf(gifId), 1);
           user.save();
         });
+      }
+    });
+  });
+});
+
+// Create Like
+app.post('/api/likes', auth.ensureAuthenticated, function (req, res) {
+  var gifId = req.params.id;
+  User.findById(req.user, function (err, user) {
+    Like.find({gif_id: gifId, voter_id: user._id}, function (err, foundLike) {
+      if (err) {
+        res.status(500).json({error: err.message});
+      } else {
+        if (foundLike) {
+          Like.findOneAndRemove({id: foundLike._id});
+        } else {
+          var newLike = new Like(req.body);
+          newLike.save(function (err, savedLike) {
+            if (err) {
+              res.status(500).json({error: err.message});
+            } else {
+              console.log(savedLike);
+            }
+          });
+        }
       }
     });
   });
