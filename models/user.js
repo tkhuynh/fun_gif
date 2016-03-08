@@ -13,7 +13,6 @@ var userSchema = new Schema({
   facebook: String,
   google: String,
   yahoo: String,
-  likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }],
   gifs: [{ type: Schema.Types.ObjectId, ref: 'Gif' }]
 });
 

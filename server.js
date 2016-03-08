@@ -235,11 +235,23 @@ app.put('/api/me', auth.ensureAuthenticated, function (req, res) {
 app.get('/api/gifs', function (req, res) {
   // for pagination
   var pageNumber = req.query.page;
+  var userId = req.query.user;
 	Gif.find({}).sort({_id: -1}).populate('owner').exec(function (err, allGifs) {
 		if (err) {
 			res.status(500).json({error: err.message});
 		} else {
       resultsInPageNumber = allGifs.slice(12 * (pageNumber - 1), 12 * pageNumber);
+      resultsInPageNumber.forEach(function(gif) {
+        Like.find({gif_id: gif._id, voter_id: userId}, function (err, foundLike) {
+          if (foundLike.length > 0) {
+            gif.currentUserLike = true;
+            gif.save();
+          } else if (foundLike.length === 0) {
+            gif.currentUserLike = false;
+            gif.save();
+          }
+        });
+      });
 			res.json({
         allGifsCount: allGifs.length,
         resultsInPageNumber: resultsInPageNumber
@@ -287,12 +299,12 @@ app.post('/api/likes', auth.ensureAuthenticated, function (req, res) {
   var gifId = req.body.gif_id;
   var userId = req.user;
   // check if user have liked this gif or not
-  Like.find({gif_id: gifId, voter_id: userId}, function (err, foundLike) {
+  Like.findOne({gif_id: gifId, voter_id: userId}, function (err, foundLike) {
     if (err) {
       res.status(500).json({error: err.message});
     } else {
       // user haven't like this gif, create a like
-      if (foundLike.length === 0) {
+      if (!foundLike) {
         var newLike = new Like(req.body);
         newLike.save(function (err, savedLike) {
           if (err) {
@@ -310,7 +322,7 @@ app.post('/api/likes', auth.ensureAuthenticated, function (req, res) {
       } 
       // user have liked this gif, now unlike
       else { 
-        Like.findOneAndRemove({_id: foundLike[0]._id}, function (err, deletedLike) {
+        Like.findOneAndRemove({_id: foundLike._id}, function (err, deletedLike) {
           // revove likr from voters attribute of gif
           Gif.findById({_id: gifId}, function(err, foundGif) {
             console.log(foundGif.voters.indexOf(deletedLike._id));

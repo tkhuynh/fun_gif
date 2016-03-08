@@ -100,7 +100,6 @@ app.factory('Like', ['$resource', function($resource) {
 
 app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 	function($scope, $auth, $http, $location) {
-		$scope.layout = "test.css";
 		$scope.isAuthenticated = function() {
 			// send GET request to '/api/me'
 			$http.get('/api/me')
@@ -199,7 +198,8 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScr
 					keyword: keyword,
 					url: gif.images.downsized.url,
 					imported: timeStamp,
-					height: Number(gif.images.downsized.height)
+					height: Number(gif.images.downsized.height),
+					currentUserLike: false
 				};
 				Gif.save(gifData, function(data) {
 					console.log("success");
@@ -221,13 +221,12 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScr
 	}
 ]);
 
-app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchorScroll', 'Like',
-	function($scope, Gif, $http, $location, $anchorScroll, Like) {
+app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchorScroll', 'Like', '$window',
+	function($scope, Gif, $http, $location, $anchorScroll, Like, $window) {
 		$scope.loaded = false;
 		$scope.totalFavorites = 0;
 		$scope.favoritesPerPage = 12; // this should match however many results your API puts on one page
 		getResultsPage(1);
-
 		$scope.pagination = {
 			current: 1
 		};
@@ -235,16 +234,15 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 		$scope.pageChanged = function(newPageNumber) {
 			getResultsPage(newPageNumber);
 		};
-
 		function getResultsPage(pageNumber) {
-			$http.get('/api/gifs?page=' + pageNumber, {
-					page: pageNumber
-				})
+			// console.log($scope.currentUser)
+			$http.get('/api/gifs?page=' + newPageNumber)
 				.then(function(response) {
 					$location.hash('top');
 					$anchorScroll();
 					$scope.favorites = response.data.resultsInPageNumber;
 					$scope.totalFavorites = response.data.allGifsCount;
+					console.log(response.data.resultsInPageNumber);
 					$scope.loaded = true;
 				});
 		}
@@ -259,13 +257,26 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 		};
 
 		$scope.likeGif = function(gif) {
+			// note: "hack" way to update number of likes
+			// if user already liked the gif, pop a like to decrease 1 like disregarding 
+			// which like belong to
+			// if user haven't like the gif, push "1 more" to increase 1 like
+			// this won't hurt the database
+			if (gif.currentUserLike) {
+				gif.voters.pop();
+			} else {
+				gif.voters.push("1 more");
+			}
+			gif.currentUserLike = !gif.currentUserLike;
 			var savedLike = {
 				gif_id: gif._id,
 				voter_id: $scope.currentUser._id
 			};
-			Like.save({gifId: gif._id}, savedLike, function(data) {
-				console.log("liked");
-			}, function(err) {
+			// note: even thought this a post request, but it does not always create a new like
+			// if user already liked the gif, the server will delete that like (unlike option)
+			// if user haven't like the gif, the server will create a like with gif_id and voter_id
+			Like.save(savedLike, function(data) {
+			}, function(err) {	
 				console.log(err);
 			});
 		};
@@ -280,13 +291,14 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 		}
 
 		// oauth
-		$scope.oauthLoading = false;
 		$scope.authenticate = function(provider) {
-			$scope.oauthLoading = true;
 			$auth.authenticate(provider)
 				.then(function(response) {
+					// set totken
+					$auth.setToken(response.data.token);
+					// call $scope.isAuthenticated to set $scope.currentUser
 					$scope.isAuthenticated();
-					$location.path('/profile');
+					$location.path('/');
 				});
 		};
 		// clear sign up / login forms
