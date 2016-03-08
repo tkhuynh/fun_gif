@@ -240,23 +240,29 @@ app.get('/api/gifs', function (req, res) {
   // for pagination
   var pageNumber = req.query.page;
   var userId = req.query.user;
-  console.log(userId)
 	Gif.find({}).sort({_id: -1}).populate('owner').exec(function (err, allGifs) {
 		if (err) {
 			res.status(500).json({error: err.message});
 		} else {
       resultsInPageNumber = allGifs.slice(12 * (pageNumber - 1), 12 * pageNumber);
-      resultsInPageNumber.forEach(function(gif) {
-        Like.find({gif_id: gif._id, voter_id: userId}, function (err, foundLike) {
-          if (foundLike.length > 0) {
-            gif.currentUserLike = true;
-            gif.save();
-          } else if (foundLike.length === 0) {
-            gif.currentUserLike = false;
-            gif.save();
-          }
+      if (userId) {
+        resultsInPageNumber.forEach(function(gif) {
+          Like.find({gif_id: gif._id, voter_id: userId}, function (err, foundLike) {
+            if (foundLike.length > 0) {
+              gif.currentUserLike = true;
+              gif.save();
+            } else if (foundLike.length === 0) {
+              gif.currentUserLike = false;
+              gif.save();
+            }
+          });
         });
-      });
+      } else {
+        resultsInPageNumber.forEach(function(gif) {
+          gif.currentUserLike = false;
+          gif.save();
+        });
+      }
 			res.json({
         allGifsCount: allGifs.length,
         resultsInPageNumber: resultsInPageNumber
