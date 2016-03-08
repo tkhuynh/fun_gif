@@ -12,8 +12,6 @@
       <a ng-show="currentUser._id === favorite.owner._id" href="javascript:void(0)" ng-click="deleteGif(favorite)"><span class="fa fa-trash pull-right"></span></a>
       <p ng-init="count = favorite.voters"><i class="fa fa-heart likes"></i> <ng-pluralize count="count.length" when="{'1': '1 like', 'other': '{} likes'}"></ng-pluralize></p>
       <p>
-        {{favorite.currentUserLike}}
-        {{favorite.voters}}
         <i class="fa fa-search"></i> <i>{{favorite.keyword}}</i>
         <br><i class="fa fa-clock-o"></i> {{favorite.imported}}
         <br><i class="fa fa-user"></i> {{favorite.owner.username}}
@@ -25,7 +23,7 @@
 <div class="row text-center">
   <dir-pagination-controls boundary-links="true" on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
 </div>
-<div class="row" ng-if="favorites.length == 0">
-  <h3 class="text-center">No Favorites Gifs Found.</h3>
-  <h5 class="text-center">Search for gif and favorite them <a href="/">here</a>.</h5>
+<div class="row text-center" ng-if="favorites.length == 0">
+  <h1 class="text-center" id="find-you-smile">Find Your Smile <a href="/" class="link">Here</a>.</h1>
+  <img src="images/smile_quote.png" class="img-reponsive">
 </div>

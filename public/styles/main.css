@@ -32,6 +32,15 @@ h3 {
   border-radius: 10px;
   box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
 }
+.search-btn {
+  color: white;
+  background-color: #dc4b3e;
+}
+.search-btn:hover, .search-btn:focus {
+  background-color: #e55c52;
+  color: white;
+  text-decoration: none;
+}
 /* thumbnails and loading gif*/
 .thumbnail {
   box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
@@ -69,9 +78,9 @@ h3 {
 .avatar, #laughter {
   margin: 0 auto;
 }
-.user-favs {
+.user-favs, .user-likes {
 	float: left;
-  width: 100%;
+  width: 50%;
 }
 .profile_fav {
   margin-bottom: 10px;
@@ -81,7 +90,7 @@ h3 {
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
 }
-.fav-count {
+.fav-count, .like-count {
   display: block;
   font-size: 25px;
   font-weight: bold;
@@ -93,13 +102,21 @@ h3 {
   overflow: scroll;
 }
 
+/* favorites pages */
+#find-you-smile {
+  margin-top: 50px;
+}
+
 /* login signup */
 
-.login-signup-form a, .login-signup-form a:hover, .login-signup-form a:focus {
+.login-signup-form a, .login-signup-form a:hover, .login-signup-form a:focus, .link,
+.link:hover, .link:focus {
   color: #de615e;
   text-decoration: none;
 }
-
+.link:hover, .link:focus {
+  font-weight: bold;
+}
 .login-signup-form .btn-large {
   display: inline-block;
   height: 50px;

@@ -206,11 +206,15 @@ app.post('/auth/google', function(req, res) {
 // Ger logged in user profile
 app.get('/api/me', auth.ensureAuthenticated, function (req, res) {
   User.findById(req.user, function (err, user) {
-    // res.send(user);
+    var userLikes;
+    Like.find({voter_id: req.user}, function (err, allLikes) {
+      userLikes = allLikes.length;
+    });
     Gif.find().sort({_id: -1}).find({owner: user._id}, function (err, userGifs) {
      res.send({
         user: user,
-        userGifs: userGifs
+        userGifs: userGifs,
+        userLikes: userLikes
       });
     });
   });
@@ -236,6 +240,7 @@ app.get('/api/gifs', function (req, res) {
   // for pagination
   var pageNumber = req.query.page;
   var userId = req.query.user;
+  console.log(userId)
 	Gif.find({}).sort({_id: -1}).populate('owner').exec(function (err, allGifs) {
 		if (err) {
 			res.status(500).json({error: err.message});
@@ -323,9 +328,8 @@ app.post('/api/likes', auth.ensureAuthenticated, function (req, res) {
       // user have liked this gif, now unlike
       else { 
         Like.findOneAndRemove({_id: foundLike._id}, function (err, deletedLike) {
-          // revove likr from voters attribute of gif
+          // revove like from voters attribute of gif
           Gif.findById({_id: gifId}, function(err, foundGif) {
-            console.log(foundGif.voters.indexOf(deletedLike._id));
             foundGif.voters.splice(foundGif.voters.indexOf(deletedLike._id), 1);
             foundGif.save();
           });

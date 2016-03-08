@@ -15,6 +15,10 @@
           <strong class="fav-count">{{currentUserGifs.length}}</strong>
           <span class="text-muted">Favorite Gifs</span>
         </div>
+        <div class="user-likes">
+          <strong class="like-count">{{currentUserLikes}}</strong>
+          <span class="text-muted">Likes</span>
+        </div>
       </div>
       <form ng-show="showEditForm" ng-submit="editProfile()">
         <div class="form-group">
@@ -54,7 +58,7 @@
       <img src="/images/laughter.png" alt="" id="laughter" class="img-responsive">
       <br>
       <br>
-      <a href="/" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-search"></span> Find Yours</a>
+      <a href="/" class="btn btn-default btn-lg search-btn"><span class="glyphicon glyphicon-search"></span> Find Yours</a>
     </div>
   </div>
 </div>

@@ -223,6 +223,7 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScr
 
 app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchorScroll', 'Like', '$window',
 	function($scope, Gif, $http, $location, $anchorScroll, Like, $window) {
+		$scope.isAuthenticated();
 		$scope.loaded = false;
 		$scope.totalFavorites = 0;
 		$scope.favoritesPerPage = 12; // this should match however many results your API puts on one page
@@ -230,13 +231,12 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 		$scope.pagination = {
 			current: 1
 		};
-
 		$scope.pageChanged = function(newPageNumber) {
 			getResultsPage(newPageNumber);
 		};
 		function getResultsPage(pageNumber) {
-			// console.log($scope.currentUser)
-			$http.get('/api/gifs?page=' + newPageNumber)
+			userId = $scope.currentUser._id;
+			$http.get('/api/gifs?page=' + pageNumber + '&user=' + userId)
 				.then(function(response) {
 					$location.hash('top');
 					$anchorScroll();
@@ -333,7 +333,7 @@ app.controller('AuthCtrl', ['$scope', '$auth', '$location',
 					// clear sign up form
 					$scope.user = {};
 					// redirect to '/profile'
-					$location.path('/profile');
+					$location.path('/');
 				}, function(error) {
 					console.error(error);
 				});
@@ -352,6 +352,7 @@ app.controller('ProfileCtrl', ['$scope', '$auth', '$http', '$location', 'Gif',
 			.then(function(response) {
 				$scope.currentUser = response.data.user;
 				$scope.currentUserGifs = response.data.userGifs;
+				$scope.currentUserLikes = response.data.userLikes;
 			});
 		$scope.editProfile = function() {
 			$http.put('/api/me', $scope.currentUser)
