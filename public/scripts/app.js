@@ -234,26 +234,38 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 		$scope.pageChanged = function(newPageNumber) {
 			getResultsPage(newPageNumber);
 		};
-		function getResultsPage(pageNumber) {
-			userId = $scope.currentUser._id;
-			$http.get('/api/gifs?page=' + pageNumber + '&user=' + userId)
-				.then(function(response) {
-					$location.hash('top');
-					$anchorScroll();
-					$scope.favorites = response.data.resultsInPageNumber;
-					$scope.totalFavorites = response.data.allGifsCount;
-					console.log(response.data.resultsInPageNumber);
-					$scope.loaded = true;
-				});
+		function getResultsPage(pageNumber) {		
+			if ($scope.currentUser) {
+				userId = $scope.currentUser._id;
+				$http.get('/api/gifs?page=' + pageNumber + '&user=' + userId)
+					.then(function(response) {
+						$location.hash('top');
+						$anchorScroll();
+						$scope.favorites = response.data.resultsInPageNumber;
+						$scope.totalFavorites = response.data.allGifsCount;
+						console.log(response.data.resultsInPageNumber);
+						$scope.loaded = true;
+					});
+			} else {
+				$http.get('/api/gifs?page=' + pageNumber)
+					.then(function(response) {
+						$location.hash('top');
+						$anchorScroll();
+						$scope.favorites = response.data.resultsInPageNumber;
+						$scope.totalFavorites = response.data.allGifsCount;
+						console.log(response.data.resultsInPageNumber);
+						$scope.loaded = true;
+					});
+			}
 		}
 
 		$scope.deleteGif = function(favorite) {
-			$scope.favorites = $scope.favorites.filter(function(gif) {
-				return gif._id !== favorite._id;
-			});
-			Gif.delete({
-				id: favorite._id
-			});
+				$scope.favorites = $scope.favorites.filter(function(gif) {
+					return gif._id !== favorite._id;
+				});
+				Gif.delete({
+					id: favorite._id
+				});
 		};
 
 		$scope.likeGif = function(gif) {
@@ -262,23 +274,29 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 			// which like belong to
 			// if user haven't like the gif, push "1 more" to increase 1 like
 			// this won't hurt the database
-			if (gif.currentUserLike) {
-				gif.voters.pop();
+			if ($scope.currentUser) {
+				if (gif.currentUserLike) {
+					gif.voters.pop();
+				} else {
+					gif.voters.push("1 more");
+				}
+				gif.currentUserLike = !gif.currentUserLike;
+				var savedLike = {
+					gif_id: gif._id,
+					voter_id: $scope.currentUser._id
+				};
+				// note: even thought this a post request, but it does not always create a new like
+				// if user already liked the gif, the server will delete that like (unlike option)
+				// if user haven't like the gif, the server will create a like with gif_id and voter_id
+				Like.save(savedLike, function(data) {
+				}, function(err) {	
+					console.log(err);
+				});
 			} else {
-				gif.voters.push("1 more");
+				$location.hash('top');
+				$anchorScroll();
+				$scope.likeError = true;
 			}
-			gif.currentUserLike = !gif.currentUserLike;
-			var savedLike = {
-				gif_id: gif._id,
-				voter_id: $scope.currentUser._id
-			};
-			// note: even thought this a post request, but it does not always create a new like
-			// if user already liked the gif, the server will delete that like (unlike option)
-			// if user haven't like the gif, the server will create a like with gif_id and voter_id
-			Like.save(savedLike, function(data) {
-			}, function(err) {	
-				console.log(err);
-			});
 		};
 	}
 ]);
