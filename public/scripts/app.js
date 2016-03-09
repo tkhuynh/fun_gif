@@ -202,11 +202,11 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScr
 					currentUserLike: false
 				};
 				gif.saved = "d";
-				// Gif.save(gifData, function(data) {
-				// 	console.log("success");
-				// }, function(error) {
-				// 	console.log(error);
-				// });
+				Gif.save(gifData, function(data) {
+					console.log("success");
+				}, function(error) {
+					console.log(error);
+				});
 			} else {
 				/* Scrolling and then resetting the $location.hash() so angular does not 
 				perceive a change in url seems to work.
