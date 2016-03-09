@@ -16,34 +16,34 @@
 
   <title>Laugh with Gifs</title>
 </head>
-<body ng-controller="MainCtrl">
+<body id="page-top" ng-controller="MainCtrl">
   <nav class="navbar navbar-default">
-    <div class="container">
+    <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <button type="button" class="navbar-toggle" data-ng-init="isCollapsed = true" data-ng-click="isCollapsed = !isCollapsed">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">Fun Gif</a>
+        <a class="navbar-brand" href="/"><img src="images/logo.gif" alt=""></a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" data-ng-class="{collapse: isCollapsed}">
         <ul class="nav navbar-nav navbar-left">
-          <li><a href="/">Home</a></li>
-          <li><a href="/favorites">Favorites</a></li>
+          <li ng-click="isCollapsed=!isCollapsed"><a href="/">Home</a></li>
+          <li ng-click="isCollapsed=!isCollapsed"><a href="/favorites">Favorites</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li ng-show="!currentUser"><a href="/signup">Sign Up</a></li>
-          <li ng-show="!currentUser"><a href="/login">Log In</a></li>
-          <li ng-show="currentUser.displayName"><a href="/profile">\{{currentUser.displayName}}
+          <li ng-click="isCollapsed=!isCollapsed" ng-show="!currentUser"><a href="/signup">Sign Up</a></li>
+          <li ng-click="isCollapsed=!isCollapsed" ng-show="!currentUser"><a href="/login">Log In</a></li>
+          <li ng-click="isCollapsed=!isCollapsed" ng-show="currentUser.displayName"><a href="/profile">\{{currentUser.displayName}}
           </a></li>
-          <li ng-show="currentUser.username && !currentUser.displayName"><a href="/profile">\{{currentUser.username}}
+          <li ng-click="isCollapsed=!isCollapsed" ng-show="currentUser.username && !currentUser.displayName"><a href="/profile">\{{currentUser.username}}
           </a></li>
-          <li ng-show="currentUser"><a href="#" ng-click="logout()">Log Out</a></li>
+          <li ng-click="isCollapsed=!isCollapsed" ng-show="currentUser"><a href="#" ng-click="logout()">Log Out</a></li>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->

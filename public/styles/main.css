@@ -21,8 +21,42 @@ h3 {
   border-radius: 0;
   box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
 }
+a.navbar-brand {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+.navbar-brand>img {
+  height: 30px;
+}
+.navbar-left a, .navbar-right a {
+  font-size: 16px;
+  margin-top: 5px;
+}
+/*small scroll top button*/
+.scroll-top {
+  z-index: 1049;
+  position: fixed;
+  right: 7%;
+  bottom: 5%;
+  width: 30px;
+  height: 30px;
+}
 
-/*search box*/
+.scroll-top .btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.scroll-top .btn:focus {
+  outline: 0;
+}
+.btn-back-top {
+  border: none;
+}
+/*homepage*/
 .search-wrapper {
   width: 450px;
   padding: 15px;
@@ -32,15 +66,25 @@ h3 {
   border-radius: 10px;
   box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
 }
-.search-btn {
+.search-btn, .btn-back-top {
   color: white;
   background-color: #dc4b3e;
 }
-.search-btn:hover, .search-btn:focus {
+.search-btn:hover, .search-btn:focus, .btn-back-top:hover, .btn-back-top:focus {
   background-color: #e55c52;
   color: white;
   text-decoration: none;
 }
+.save-btn {
+  color: #dc4b3e;
+  font-size: 20px;
+  text-decoration: none;
+}
+.save-btn:hover, .save-btn:focus {
+  color: #e55c52;
+  text-decoration: none;
+}
+
 /* thumbnails and loading gif*/
 .thumbnail {
   box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
@@ -103,8 +147,16 @@ h3 {
 }
 
 /* favorites pages */
-#find-you-smile {
+#find-your-smile {
   margin-top: 50px;
+}
+.favorites-info{
+  margin-left: 5px;
+}
+.like-heart, .unlike-heart {
+  color: #DC4B3E;
+  font-size: 22px;
+  margin-right: 5px;
 }
 
 /* login signup */
@@ -237,6 +289,16 @@ h3 {
   #profile-info {
     text-align: center;
   }
+  .thumbnail img.gif {
+    height: 160px;
+  }
+  .favorites-info{
+    font-size: 20px;
+  }
+  .like-heart, .unlike-heart {
+    font-size: 32px;
+    margin-right: 5px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -258,7 +320,25 @@ h3 {
   .login-signup-form .inner-bg {
     padding: 0;
   }
-
+  .thumbnail img.gif {
+    height: 160px;
+  }
+  .login-signup-form h1 {
+    font-size: 32px;
+  }
+  .thumbnail img.gif {
+    height: 160px;
+  }
+  .favorites-info{
+    font-size: 20px;
+  }
+  .like-heart, .unlike-heart {
+    font-size: 32px;
+    margin-right: 5px;
+  }
+  .userFavGifs img.gif {
+    height: 140px;
+  }
 }
 
 @media (max-width: 415px) {
@@ -266,5 +346,17 @@ h3 {
   .login-signup-form h1 {
     font-size: 32px;
   }
-
+  .thumbnail img.gif {
+    height: 180px;
+  }
+  .favorites-info{
+    font-size: 20px;
+  }
+  .like-heart, .unlike-heart {
+    font-size: 32px;
+    margin-right: 5px;
+  }
+  .userFavGifs img.gif {
+    height: 140px;
+  }
 }

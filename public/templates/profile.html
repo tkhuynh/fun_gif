@@ -47,8 +47,9 @@
             <img ng-src="{{favorite.url}}" class="gif">
             <img src="images/giphy_logo.png" alt="">
             <a href="javascript:void(0)" ng-click="deleteGif(favorite)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
-            <p>Keyword: <i>{{favorite.keyword}}</i>
-              <br>Added: {{favorite.imported}}
+            <p><i class="fa fa-heart likes"></i> <ng-pluralize count="{{favorite.voters.length}}" when="{'1': '1 like', 'other': '{} likes'}"></ng-pluralize>
+              <br><i class="fa fa-search"></i> <i>{{favorite.keyword}}</i>
+              <br><i class="fa fa-clock-o"></i> {{favorite.imported}}
             </p>
           </div>
         </div>

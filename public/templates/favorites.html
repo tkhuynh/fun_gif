@@ -4,16 +4,15 @@
 <div class="row" ng-if="favorites.length > 0">
   <a id="top"></a>
 	<h3 class="text-center" id="favoriteTopAnchor">Our Favorite Gifs</h3>
-  <div ng-show="likeError" class="alert alert-warning"><strong>FYI!</strong> Please singup or login to like gifs.</div>
-  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" dir-paginate="favorite in favorites | itemsPerPage: favoritesPerPage" total-items="totalFavorites" current-page="pagination.current">
-    <div class="thumbnail">
+  <div ng-show="likeError" class="alert alert-warning"><strong>FYI!</strong> Please signup or login to like gifs.</div>
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" dir-paginate="favorite in favorites | itemsPerPage: favoritesPerPage" total-items="totalFavorites" current-page="pagination.current">
+    <div class="thumbnail favorites-thumbnail">
       <img ng-src="{{favorite.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
-      <a href="javascript:void(0)" ng-click="likeGif(favorite)"><i class="fa" ng-class="{'fa-heart pull-right': favorite.currentUserLike, 'fa-heart-o pull-right': !favorite.currentUserLike}"></i></a>  
-      <a ng-show="currentUser._id === favorite.owner._id" href="javascript:void(0)" ng-click="deleteGif(favorite)"><span class="fa fa-trash pull-right"></span></a>
-      <p ng-init="count = favorite.voters"><i class="fa fa-heart likes"></i> <ng-pluralize count="count.length" when="{'1': '1 like', 'other': '{} likes'}"></ng-pluralize></p>
-      <p>
-        <i class="fa fa-search"></i> <i>{{favorite.keyword}}</i>
+      <br>
+      <a href="javascript:void(0)" ng-click="likeGif(favorite)"><i class="fa" ng-class="{'fa-heart pull-right like-heart': favorite.currentUserLike, 'fa-heart-o pull-right unlike-heart': !favorite.currentUserLike}"></i></a>  
+      <p ng-init="count = favorite.voters" class="favorites-info"><i class="fa fa-heart likes"></i> <ng-pluralize count="count.length" when="{'1': '1 like', 'other': '{} likes'}"></ng-pluralize>
+        <br><i class="fa fa-search"></i> <i>{{favorite.keyword}}</i>
         <br><i class="fa fa-clock-o"></i> {{favorite.imported}}
         <br><i class="fa fa-user"></i> {{favorite.owner.username}}
       </p>
@@ -25,6 +24,12 @@
   <dir-pagination-controls boundary-links="true" on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
 </div>
 <div class="row text-center" ng-if="favorites.length == 0">
-  <h1 class="text-center" id="find-you-smile">Find Your Smile <a href="/" class="link">Here</a>.</h1>
+  <h1 class="text-center" id="find-your-smile">Find Your Smile <a href="/" class="link">Here</a>.</h1>
   <img src="images/smile_quote.png" class="img-reponsive">
+</div>
+<!-- small back to top button for mobile device -->
+<div class="scroll-top visible-xs visible-sm">
+  <a class="btn btn-primary btn-back-top" href="#page-top">
+    <i class="fa fa-chevron-up"></i>
+  </a>
 </div>

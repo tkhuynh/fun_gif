@@ -1,3 +1,4 @@
+<a name="top-home"></a>
 <h1 class="text-center">Life is Beautiful
   <br>
   Find Your Laughters
@@ -16,14 +17,14 @@
   <img src="images/loading.gif" class="loading img-responsive">
 </div>
 <div class="row" ng-if="!searched" ng-init="gifInit()">
-  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-repeat="gif in gifs">
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-repeat="gif in gifs">
     <div class="thumbnail">
       <img ng-src="{{gif.images.downsized.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
       <p>
-        <a href="javascript:void(0)" ng-click="saveGif(gif)" ng-class="{disabled: gif.favorited}"> 
-          <span class="glyphicon" ng-class="{'glyphicon-star': gif.favorited, 'glyphicon-star-empty': !gif.favorited}"></span>  
-          favorite
+        <a href="javascript:void(0)" ng-click="saveGif(gif)" ng-class="{disabled: gif.favorited}" class="save-btn"> 
+          <span class="glyphicon" ng-class="{'glyphicon-star full-star': gif.favorited, 'glyphicon-star-empty': !gif.favorited}"></span>  
+          Save{{gif.saved}}
         </a>
       </p>
     </div>
@@ -31,14 +32,14 @@
 </div>
 <div class="row" ng-if="searched && gifs.length > 0">
 	<h3 class="text-center">Results for {{savedKeyword}}</h3>
-  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-repeat="gif in gifs">
+  <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-repeat="gif in gifs">
     <div class="thumbnail">
       <img ng-src="{{gif.images.downsized.url}}" class="gif">
       <img src="images/giphy_logo.png" alt="">
       <p>
         <a href="javascript:void(0)" ng-click="saveGif(gif)" ng-class="{disabled: gif.favorited}"> 
           <span class="glyphicon" ng-class="{'glyphicon-star': gif.favorited, 'glyphicon-star-empty': !gif.favorited}"></span>  
-          favorite
+          Save{{gif.saved}}
         </a>
       </p>
     </div>
@@ -46,4 +47,10 @@
 </div>
 <div class="row" ng-if="searched && gifs.length == 0 && loaded">
   <h3 class="text-center">No gifs found with the keyword <i>{{savedKeyword}}</i></h3>
+</div>
+<!-- small back to top button for mobile device -->
+<div class="scroll-top visible-xs visible-sm">
+  <a class="btn btn-primary btn-back-top" href="#page-top">
+    <i class="fa fa-chevron-up"></i>
+  </a>
 </div>

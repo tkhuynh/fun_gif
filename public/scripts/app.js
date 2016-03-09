@@ -201,11 +201,12 @@ app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScr
 					height: Number(gif.images.downsized.height),
 					currentUserLike: false
 				};
-				Gif.save(gifData, function(data) {
-					console.log("success");
-				}, function(error) {
-					console.log(error);
-				});
+				gif.saved = "d";
+				// Gif.save(gifData, function(data) {
+				// 	console.log("success");
+				// }, function(error) {
+				// 	console.log(error);
+				// });
 			} else {
 				/* Scrolling and then resetting the $location.hash() so angular does not 
 				perceive a change in url seems to work.
@@ -243,7 +244,6 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 						$anchorScroll();
 						$scope.favorites = response.data.resultsInPageNumber;
 						$scope.totalFavorites = response.data.allGifsCount;
-						console.log(response.data.resultsInPageNumber);
 						$scope.loaded = true;
 					});
 			} else {
@@ -253,21 +253,11 @@ app.controller('FavoritesCtrl', ['$scope', 'Gif', '$http', '$location', '$anchor
 						$anchorScroll();
 						$scope.favorites = response.data.resultsInPageNumber;
 						$scope.totalFavorites = response.data.allGifsCount;
-						console.log(response.data.resultsInPageNumber);
 						$scope.loaded = true;
 					});
 			}
 		}
-
-		$scope.deleteGif = function(favorite) {
-				$scope.favorites = $scope.favorites.filter(function(gif) {
-					return gif._id !== favorite._id;
-				});
-				Gif.delete({
-					id: favorite._id
-				});
-		};
-
+		
 		$scope.likeGif = function(gif) {
 			// note: "hack" way to update number of likes
 			// if user already liked the gif, pop a like to decrease 1 like disregarding 
