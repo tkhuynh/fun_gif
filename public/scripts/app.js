@@ -1,8 +1,13 @@
 function randomNum(array) {
 	return Math.floor(Math.random() * array.length);
 }
-var app = angular.module('funGifApp', ['ngRoute', 'ngResource', 'satellizer', 'angularUtils.directives.dirPagination']);
+var app = angular.module('funGifApp', ['ngRoute', 'ngResource', 'satellizer', 'angularUtils.directives.dirPagination', 'angulike']);
 
+app.run([
+      '$rootScope', function ($rootScope) {
+          $rootScope.facebookAppId = '1698583787047335';
+      }
+  ]);
 app.config(['$routeProvider', '$locationProvider', '$authProvider', function($routeProvider, $locationProvider, $authProvider) {
 	$routeProvider
 		.when('/', {
@@ -133,6 +138,12 @@ app.controller('MainCtrl', ['$scope', '$auth', '$http', '$location',
 
 app.controller('SearchCtrl', ['$scope', '$http', 'Gif', '$location', '$anchorScroll',
 	function($scope, $http, Gif, $location, $anchorScroll) {
+		$scope.myModel = {
+      Url: 'https://fungifs.herokuapp.com',
+      Name: 'Fun Gifs - Life is beautiful, find your laugters here.', 
+      ImageUrl: 'https://fungifs.herokuapp.com/images/smile.png'
+    };
+
 		var greetings = ['hello', 'nice day', 'good', 'nice', 'cute', 'thumb up', 'love', 'happy'];
 		$scope.gifs = [];
 		$scope.searched = false;
